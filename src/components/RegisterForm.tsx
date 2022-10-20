@@ -1,20 +1,28 @@
 import React from 'react'
+import { Formik, Form, Field } from 'formik'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import {
-    Formik,
-    FormikHelpers,
-    FormikProps,
-    Form,
-    Field,
-    FieldProps,
-} from 'formik'
-import { fieldTextStyle, submitButtonStyle } from '../styles/form'
+    errorMessageStyle,
+    fieldContainerStyle,
+    submitButtonStyle,
+    errorFieldStyle,
+    fieldStyle,
+} from '../styles/form'
+import { IRegisterDate } from '../models/authModels'
 
-interface IFormValues {
+export interface IRegisterFields {
     name: string
     email: string
     password: string
-    repeatPassword: string
+    confirmPassword: string
 }
+
+
+interface RegisterFormProps {
+    handleSubmit: (values: IRegisterDate) => void
+}
+
 
 const validateRequired = (value: string, a: any) => {
     let error
@@ -24,128 +32,130 @@ const validateRequired = (value: string, a: any) => {
     return error
 }
 
-const fieldStyle: string = `${fieldTextStyle} w-[400px] border-2`
-const errorFieldStyle: string = `${fieldStyle} text-[#FF3B3B] border-[#FF3B3B]`
-const errorMessageStyle: string =
-    'absolute bottom-[8px] left-[0px] text-[#FF3B3B] text-[14px]'
-const fieldContainerStyle: string = 'relative pb-[30px]'
-
-const RegisterForm = () => {
-    const initialValues: IFormValues = {
+const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
+    const initialValues: IRegisterFields = {
         name: '',
         email: '',
         password: '',
-        repeatPassword: '',
+        confirmPassword: '',
     }
 
-    const handleSubmit = (values: IFormValues, actions: any) => {
-        console.log({ values, actions })
-
-        if (values.password != values.repeatPassword) {
-            actions.setErrors({ repeatPassword: 'Password retry error' })
+    const onSubmit = (values: IRegisterFields, actions: any) => {
+        if (values.password != values.confirmPassword) {
+            actions.setErrors({
+                confirmPassword: true,
+                password: true,
+            })
+            toast.error('Confirm password must be the same as the password')
+        } else {
+            handleSubmit({
+                name: values.name,
+                email: values.email,
+                password: values.password,
+            })
         }
     }
 
     return (
-        <Formik
-            validateOnBlur
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-        >
-            {({ errors, touched, isValidating }) => (
-                <Form>
-                    <div className='flex-col'>
-                        <h1 className='text-[34px] text-gray_60 font-medium text-center pb-[40px]'>
-                            Signup
-                        </h1>
-                        <div className={fieldContainerStyle}>
-                            <Field
-                                id='name'
-                                name='name'
-                                placeholder='Name'
-                                className={
-                                    errors.name && touched.name
-                                        ? errorFieldStyle
-                                        : fieldStyle
-                                }
-                                validate={validateRequired}
-                            />
-                            {errors.name && touched.name && (
-                                <div className={errorMessageStyle}>
-                                    {errors.name}
-                                </div>
-                            )}
-                        </div>
-                        <div className={fieldContainerStyle}>
-                            <Field
-                                id='email'
-                                name='email'
-                                placeholder='Email'
-                                validate={validateRequired}
-                                className={
-                                    errors.email && touched.email
-                                        ? errorFieldStyle
-                                        : fieldStyle
-                                }
-                            />
-                            {errors.email && touched.email && (
-                                <div className={errorMessageStyle}>
-                                    {errors.email}
-                                </div>
-                            )}
-                        </div>
-                        <div className={fieldContainerStyle}>
-                            <Field
-                                id='password'
-                                name='password'
-                                placeholder='Password'
-                                type='password'
-                                validate={validateRequired}
-                                className={
-                                    errors.password && touched.password
-                                        ? errorFieldStyle
-                                        : fieldStyle
-                                }
-                            />
-                            {errors.password && touched.password && (
-                                <div className={errorMessageStyle}>
-                                    {errors.password}
-                                </div>
-                            )}
-                        </div>
-                        <div className={fieldContainerStyle}>
-                            <Field
-                                id='repeatPassword'
-                                name='repeatPassword'
-                                placeholder='Repeat password'
-                                type='password'
-                                validate={validateRequired}
-                                className={
-                                    errors.repeatPassword &&
-                                    touched.repeatPassword
-                                        ? `${errorFieldStyle} mp-[30px]`
-                                        : `${fieldStyle} mp-[30px]`
-                                }
-                            />
-                            {errors.repeatPassword &&
-                                touched.repeatPassword && (
+        <>
+            <Formik
+                validateOnBlur
+                initialValues={initialValues}
+                onSubmit={onSubmit}
+            >
+                {({ errors, touched }) => (
+                    <Form>
+                        <div className='flex-col'>
+                            <div className={fieldContainerStyle}>
+                                <Field
+                                    id='name'
+                                    name='name'
+                                    placeholder='Name'
+                                    className={
+                                        errors.name && touched.name
+                                            ? errorFieldStyle
+                                            : fieldStyle
+                                    }
+                                    validate={validateRequired}
+                                />
+                                {errors.name && touched.name && (
                                     <div className={errorMessageStyle}>
-                                        {errors.repeatPassword}
+                                        {errors.name}
                                     </div>
                                 )}
+                            </div>
+                            <div className={fieldContainerStyle}>
+                                <Field
+                                    id='email'
+                                    name='email'
+                                    placeholder='Email'
+                                    validate={validateRequired}
+                                    className={
+                                        errors.email && touched.email
+                                            ? errorFieldStyle
+                                            : fieldStyle
+                                    }
+                                />
+                                {errors.email && touched.email && (
+                                    <div className={errorMessageStyle}>
+                                        {errors.email}
+                                    </div>
+                                )}
+                            </div>
+                            <div className={fieldContainerStyle}>
+                                <Field
+                                    id='password'
+                                    name='password'
+                                    placeholder='Password'
+                                    type='password'
+                                    validate={validateRequired}
+                                    className={
+                                        errors.password && touched.password
+                                            ? errorFieldStyle
+                                            : fieldStyle
+                                    }
+                                />
+                                {errors.password && touched.password && (
+                                    <div className={errorMessageStyle}>
+                                        {errors.password}
+                                    </div>
+                                )}
+                            </div>
+                            <div className={fieldContainerStyle}>
+                                <Field
+                                    id='confirmPassword'
+                                    name='confirmPassword'
+                                    placeholder='Confirm password'
+                                    type='password'
+                                    validate={validateRequired}
+                                    className={
+                                        errors.confirmPassword &&
+                                        touched.confirmPassword
+                                            ? `${errorFieldStyle} mp-[30px]`
+                                            : `${fieldStyle} mp-[30px]`
+                                    }
+                                />
+                                {errors.confirmPassword &&
+                                    touched.confirmPassword && (
+                                        <div className={errorMessageStyle}>
+                                            {errors.confirmPassword}
+                                        </div>
+                                    )}
+                            </div>
                         </div>
-                    </div>
-                    <div className='text-center'>
-                        <button
-                            className={`${submitButtonStyle} `}
-                            type='submit'
-                        >
-                            Submit
-                        </button>
-                    </div>
-                </Form>
-            )}
-        </Formik>
+                        <div className='text-center'>
+                            <button
+                                className={`${submitButtonStyle} `}
+                                type='submit'
+                            >
+                                Create account
+                            </button>
+                        </div>
+                    </Form>
+                )}
+            </Formik>
+            <ToastContainer position='bottom-right' theme='light' />
+        </>
     )
 }
 
