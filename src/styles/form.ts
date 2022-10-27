@@ -9,7 +9,7 @@ export const fieldTextStyle: string =
 export const fieldContainerStyle: string = 'relative pb-[30px]'
 export const fieldStyle: string = `${fieldTextStyle} w-[575px] border-[1.5px] border-gray_10`
 export const errorFieldStyle: string = `${fieldStyle} border-[#FF3B3B]`
-export const submitButtonStyle: string =
+export const buttonStyle: string =
     'inline-block bg-[#84C7AE] px-[70px] py-[20px] rounded-[23px] text-[25px] text-white'
 //-----Error Message
 export const errorMessageStyle: string =

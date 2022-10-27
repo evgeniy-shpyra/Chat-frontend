@@ -1,19 +1,37 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import authAPI from '../api/endpoints/authAPI'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+
 import FormContainer from '../components/FormContainer'
 import RegisterForm from '../components/RegisterForm'
-import { IRegisterDate } from '../models/authModels'
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
+import { IRegisterDate } from '../models/models'
+import { errorIsShown, registration } from '../redux/features/userSlice'
 import { titleStyle } from '../styles/form'
 
 const Register = () => {
-    const handleSubmit = async (values: IRegisterDate) => {
-        console.log(values)
+    const dispatch = useAppDispatch()
 
-        const data = await authAPI
-            .registration(values)
-            .then((response) => response.data)
+    const { isAuth, error } = useAppSelector((state) => state.user)
+
+    const navigate = useNavigate()
+    React.useEffect(() => {
+        if (isAuth) {
+            navigate('/avatar')
+        }
+    }, [isAuth])
+
+    React.useEffect(() => {
+        if (error) {
+            toast.error(error)
+            dispatch(errorIsShown())
+        }
+    }, [error])
+
+    const handleSubmit = async (values: IRegisterDate) => {
+        dispatch(registration(values))
     }
+
     return (
         <>
             <FormContainer>
@@ -22,7 +40,7 @@ const Register = () => {
                 <p className='text-paragraph text-[16px] text-center pt-[20px] '>
                     Already Have An Account?{' '}
                     <Link to='/login' className='underline'>
-                        Sign In
+                        Log In
                     </Link>
                 </p>
             </FormContainer>

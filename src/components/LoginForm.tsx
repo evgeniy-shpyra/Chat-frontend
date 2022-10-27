@@ -3,17 +3,15 @@ import { Formik, Form, Field } from 'formik'
 import {
     errorMessageStyle,
     fieldContainerStyle,
-    submitButtonStyle,
+    buttonStyle,
     errorFieldStyle,
     fieldStyle,
 } from '../styles/form'
+import { ILoginDate } from '../models/models'
 
-export interface ILoginFormValues {
-    email: string
-    password: string
-}
+
 interface LoginFormProps {
-    handleSubmit: (values: ILoginFormValues) => void
+    handleSubmit: (values: ILoginDate) => void
 }
 
 const validateRequired = (value: string, a: any) => {
@@ -24,17 +22,18 @@ const validateRequired = (value: string, a: any) => {
     return error
 }
 
-
-
 const LoginForm = ({ handleSubmit }: LoginFormProps) => {
-    const initialValues: ILoginFormValues = {
-        email: '',
+    const initialValues: ILoginDate = {
+        username: '',
         password: '',
     }
 
-    const onSubmit = (values: ILoginFormValues, actions: any) => {
+
+    const onSubmit = (values: ILoginDate, actions: any) => {
         handleSubmit(values)
     }
+
+  
 
     return (
         <Formik
@@ -47,19 +46,19 @@ const LoginForm = ({ handleSubmit }: LoginFormProps) => {
                     <div className='flex-col'>
                         <div className={fieldContainerStyle}>
                             <Field
-                                id='email'
-                                name='email'
-                                placeholder='Email'
+                                id='username'
+                                name='username'
+                                placeholder='Username'
                                 validate={validateRequired}
                                 className={
-                                    errors.email && touched.email
+                                    errors.username && touched.username
                                         ? errorFieldStyle
                                         : fieldStyle
                                 }
                             />
-                            {errors.email && touched.email && (
+                            {errors.username && touched.username && (
                                 <div className={errorMessageStyle}>
-                                    {errors.email}
+                                    {errors.username}
                                 </div>
                             )}
                         </div>
@@ -85,7 +84,7 @@ const LoginForm = ({ handleSubmit }: LoginFormProps) => {
                     </div>
                     <div className='text-center'>
                         <button
-                            className={`${submitButtonStyle} `}
+                            className={`${buttonStyle} `}
                             type='submit'
                         >
                             Submit

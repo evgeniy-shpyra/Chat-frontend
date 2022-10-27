@@ -15,7 +15,7 @@ module.exports = {
                 gray_60: '#666666',
                 background: '#84C7AE',
                 paragraph: '#32403B',
-                form_bg: '#F6FBF9',
+                second_bg: '#F6FBF9',
             },
         },
         fontFamily: {

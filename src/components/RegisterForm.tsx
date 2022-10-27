@@ -1,28 +1,24 @@
 import React from 'react'
 import { Formik, Form, Field } from 'formik'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import {
     errorMessageStyle,
     fieldContainerStyle,
-    submitButtonStyle,
+    buttonStyle,
     errorFieldStyle,
     fieldStyle,
 } from '../styles/form'
-import { IRegisterDate } from '../models/authModels'
+import { IRegisterDate } from '../models/models'
 
-export interface IRegisterFields {
-    name: string
-    email: string
-    password: string
+
+export interface IRegisterFields extends IRegisterDate {
     confirmPassword: string
 }
-
 
 interface RegisterFormProps {
     handleSubmit: (values: IRegisterDate) => void
 }
-
 
 const validateRequired = (value: string, a: any) => {
     let error
@@ -34,11 +30,12 @@ const validateRequired = (value: string, a: any) => {
 
 const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
     const initialValues: IRegisterFields = {
-        name: '',
+        username: '',
         email: '',
         password: '',
         confirmPassword: '',
     }
+
 
     const onSubmit = (values: IRegisterFields, actions: any) => {
         if (values.password != values.confirmPassword) {
@@ -49,7 +46,7 @@ const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
             toast.error('Confirm password must be the same as the password')
         } else {
             handleSubmit({
-                name: values.name,
+                username: values.username,
                 email: values.email,
                 password: values.password,
             })
@@ -68,19 +65,19 @@ const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
                         <div className='flex-col'>
                             <div className={fieldContainerStyle}>
                                 <Field
-                                    id='name'
-                                    name='name'
-                                    placeholder='Name'
+                                    id='username'
+                                    name='username'
+                                    placeholder='Username'
                                     className={
-                                        errors.name && touched.name
+                                        errors.username && touched.username
                                             ? errorFieldStyle
                                             : fieldStyle
                                     }
                                     validate={validateRequired}
                                 />
-                                {errors.name && touched.name && (
+                                {errors.username && touched.username && (
                                     <div className={errorMessageStyle}>
-                                        {errors.name}
+                                        {errors.username}
                                     </div>
                                 )}
                             </div>
@@ -145,7 +142,7 @@ const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
                         </div>
                         <div className='text-center'>
                             <button
-                                className={`${submitButtonStyle} `}
+                                className={`${buttonStyle} `}
                                 type='submit'
                             >
                                 Create account
@@ -154,7 +151,7 @@ const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
                     </Form>
                 )}
             </Formik>
-            <ToastContainer position='bottom-right' theme='light' />
+           
         </>
     )
 }
