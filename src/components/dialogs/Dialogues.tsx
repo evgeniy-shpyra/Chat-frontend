@@ -157,7 +157,7 @@ const Dialogues = () => {
     return (
         <div className='flex-none w-[450px] bg-background_1 relative border-r-2 pr-[5px]'>
             <Toolbar />
-            <div className='h-[calc(100%-103px)] overflow-y-scroll scrollbar-thin scrollbar-thumb-background_3 scrollbar-thumb scrollbar-thumb-rounded-full scrollbar-track-none'>
+            <div className='h-[calc(100%-103px)] overflow-y-scroll scrollbar-thin scrollbar-thumb-background_3 scrollbar-thumb scrollbar-thumb-rounded-full scrollbar-track-none '>
                 <ul>
                     {dialogues.map((item) => (
                         <Dialog

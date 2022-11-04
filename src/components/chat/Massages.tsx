@@ -4,10 +4,10 @@ import InputMassage from './InputMassage'
 import Massage from './Massage'
 
 const Massages = () => {
-    const messagesEndRef = React.useRef<HTMLDivElement>(null)
+    const massagesTrackRef = React.useRef<HTMLDivElement>(null)
 
     const scrollToBottom = (): void => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        massagesTrackRef.current?.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
     }
 
     React.useEffect(() => {
@@ -15,9 +15,9 @@ const Massages = () => {
     }, [])
 
     return (
-        <div className=' h-full px-[35px] flex flex-col'>
-            <div className='overflow-y-scroll h-[calc(100%-205px)] overflow-hidden'>
-                <Massage
+        <div className='flex flex-col overflow-y-scroll scrollbar-thin scrollbar-thumb-background_3 scrollbar-thumb scrollbar-thumb-rounded-full scrollbar-track-none scrollbar-track-rounded-full'>
+            <div ref={massagesTrackRef} className='px-[25px] justify-self-end'>
+                {/* <Massage
                     avatarUrl='https://ev-chat-images.s3.eu-north-1.amazonaws.com/1667232732067-1551512888_2-730x617.jpg'
                     text='11111111111'
                     owner={OwnerOfMassageEnum.My}
@@ -76,7 +76,7 @@ const Massages = () => {
                     avatarUrl='https://ev-chat-images.s3.eu-north-1.amazonaws.com/1667232732067-1551512888_2-730x617.jpg'
                     text='55555555555555555'
                     owner={OwnerOfMassageEnum.My}
-                />
+                /> */}
                 <Massage
                     avatarUrl='https://ev-chat-images.s3.eu-north-1.amazonaws.com/1667235494782-1551511801_1.jpg'
                     text='66666666666666666666666666666666 6666666666666666666666666666666666 6666666666666666666666666'
@@ -86,11 +86,9 @@ const Massages = () => {
                     avatarUrl='https://ev-chat-images.s3.eu-north-1.amazonaws.com/1667235494782-1551511801_1.jpg'
                     text='77777777777'
                     owner={OwnerOfMassageEnum.NotMine}
-                    // ref={messagesEndRef}
                 />
-                {/* <div ref={messagesEndRef} /> */}
-                {/* <div ref={messagesEndRef} className='h-0 w-0 flex-none' /> */}
             </div>
+
         </div>
     )
 }

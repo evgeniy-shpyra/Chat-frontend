@@ -6,7 +6,7 @@ interface MassageProps {
     text: string
     owner: OwnerOfMassageEnum
 }
-const Massage = ({ avatarUrl, text, owner, }: MassageProps) => {
+const Massage = ({ avatarUrl, text, owner}: MassageProps) => {
     const containerStyles =
         owner === OwnerOfMassageEnum.My ? 'flex-row-reverse' : ''
 

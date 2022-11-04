@@ -13,7 +13,7 @@ const InputMassage = () => {
     }
 
     return (
-        <div className='pb-[35px] pt-[30px] justify-self-end sticky bottom-0'>
+        <div className='flex-none pb-[35px] pt-[30px] px-[35px]'>
             <div className='relative'>
                 <Formik initialValues={initialValues} onSubmit={handleSubmit}>
                     <Form>

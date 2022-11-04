@@ -12,9 +12,11 @@ const data = {
 
 const Chat = () => {
     return (
-        <div className='flex-auto w-full bg-background_4 relative'>
+        <div className='flex-auto w-full bg-background_4 relative flex flex-col'>
             <HeaderBar name={data.name} avatarUrl={data.avatarUrl} />
-            <Massages />
+            <div className='flex-auto h-full pr-[5px] overflow-hidden flex flex-col justify-end'>
+                <Massages />
+            </div>
             <InputMassage />
         </div>
     )
