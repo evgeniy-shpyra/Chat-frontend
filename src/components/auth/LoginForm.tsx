@@ -6,9 +6,8 @@ import {
     buttonStyle,
     errorFieldStyle,
     fieldStyle,
-} from '../styles/form'
-import { ILoginDate } from '../models/models'
-
+} from '../../styles/form'
+import { ILoginDate } from '../../models/models'
 
 interface LoginFormProps {
     handleSubmit: (values: ILoginDate) => void
@@ -28,12 +27,9 @@ const LoginForm = ({ handleSubmit }: LoginFormProps) => {
         password: '',
     }
 
-
     const onSubmit = (values: ILoginDate, actions: any) => {
         handleSubmit(values)
     }
-
-  
 
     return (
         <Formik
@@ -83,10 +79,7 @@ const LoginForm = ({ handleSubmit }: LoginFormProps) => {
                         </div>
                     </div>
                     <div className='text-center'>
-                        <button
-                            className={`${buttonStyle} `}
-                            type='submit'
-                        >
+                        <button className={`${buttonStyle} `} type='submit'>
                             Submit
                         </button>
                     </div>

@@ -8,7 +8,7 @@ interface ISetAvatarData {
 
 class UserAPI {
     static setAvatar = (values: ISetAvatarData) => {
-        return instance.post<IResponseAvatarData>(`/setavatar/${values.id}`, values.file)
+        return instance.post<IResponseAvatarData>(`/setvatar/${values.id}`, values.file)
     }
 }
 

@@ -10,7 +10,9 @@ class AuthAPI {
         return instance.post<IResponseUserData>('/auth/login', values)
     }
     static refresh = () => {
-        return instance.get('/auth/login')
+        return instance.get<IResponseUserData>('/auth/refresh', {
+            withCredentials: true,
+        })
     }
 }
 

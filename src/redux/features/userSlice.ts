@@ -1,4 +1,5 @@
-import { RootState } from './../store'
+import { AuthStatusEnum } from './../../models/models'
+import { RootState } from '../store'
 import { ResultCode } from '../../api/index'
 import { ILoginDate, IRegisterDate } from '../../models/models'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
@@ -6,53 +7,56 @@ import { IUserDate } from '../../models/models'
 import authAPI from '../../api/endpoints/authAPI'
 import UserAPI from '../../api/endpoints/userAPI'
 
-export const registration = createAsyncThunk(
-    'user/registration',
-    async (values: IRegisterDate, { rejectWithValue }) => {
-        try {
-            const response = await authAPI.registration(values)
+export const registration = createAsyncThunk<
+    IUserDate,
+    IRegisterDate,
+    { rejectValue: string }
+>('user/registration', async (values, { rejectWithValue }) => {
+    try {
+        const response = await authAPI.registration(values)
 
-            if (response.data.resultCode === ResultCode.Error)
-                throw new Error(response.data.msg)
+        if (response.data.resultCode === ResultCode.Error)
+            throw new Error(response.data.msg)
 
-            return response.data
-        } catch (err: any) {
-            return rejectWithValue(err.message)
-        }
+        return response.data.data
+    } catch (err) {
+        return rejectWithValue((err as Error).message)
     }
-)
+})
 
-export const login = createAsyncThunk(
-    'user/login',
-    async (values: ILoginDate, { rejectWithValue }) => {
-        try {
-            const response = await authAPI.login(values)
+export const login = createAsyncThunk<
+    IUserDate,
+    ILoginDate,
+    { rejectValue: string }
+>('user/login', async (values, thunkAPI) => {
+    try {
+        const response = await authAPI.login(values)
 
-            if (response.data.resultCode === ResultCode.Error)
-                throw new Error(response.data.msg)
+        if (response.data.resultCode === ResultCode.Error)
+            throw new Error(response.data.msg)
 
-            return response.data
-        } catch (err: any) {
-            return rejectWithValue(err.message)
-        }
+        return response.data.data
+    } catch (err) {
+        return thunkAPI.rejectWithValue((err as Error).message)
     }
-)
+})
 
-export const checkAuth = createAsyncThunk(
-    'user/checkauth',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await authAPI.refresh()
+export const checkAuth = createAsyncThunk<
+    IUserDate,
+    undefined,
+    { rejectValue: string }
+>('user/checkauth', async (_, { rejectWithValue }) => {
+    try {
+        const response = await authAPI.refresh()
 
-            if (response.data.resultCode === ResultCode.Error)
-                throw new Error(response.data.msg)
+        if (response.data.resultCode === ResultCode.Error)
+            throw new Error(response.data.msg)
 
-            return response.data
-        } catch (err: any) {
-            return rejectWithValue(err.message)
-        }
+        return response.data.data
+    } catch (err) {
+        return rejectWithValue((err as Error).message)
     }
-)
+})
 
 export const setAvatar = createAsyncThunk<
     string,
@@ -91,7 +95,7 @@ interface IInitialState {
     imagePath: string | null
     error: string | null
     isLoading: boolean
-    isAuth: boolean
+    authStatus: AuthStatusEnum
 }
 
 const initialState: IInitialState = {
@@ -101,7 +105,7 @@ const initialState: IInitialState = {
     imagePath: null,
     error: null,
     isLoading: false,
-    isAuth: false,
+    authStatus: AuthStatusEnum.Unknown,
 }
 
 export const userSlice = createSlice({
@@ -115,8 +119,13 @@ export const userSlice = createSlice({
     extraReducers(builder) {
         builder
             .addCase(registration.pending, (state) => {
+                state.id = null
+                state.username = null
+                state.email = null
+                state.imagePath = null
                 state.isLoading = true
                 state.error = null
+                state.authStatus = AuthStatusEnum.Unknown
             })
             .addCase(
                 registration.fulfilled,
@@ -125,21 +134,18 @@ export const userSlice = createSlice({
                     state.username = action.payload.user.username
                     state.email = action.payload.user.email
                     state.isLoading = false
-                    state.isAuth = true
+                    state.authStatus = AuthStatusEnum.Login
                     localStorage.setItem(
                         'token',
                         action.payload.tokens.accessToken
                     )
                 }
             )
-            .addCase(
-                registration.rejected,
-                (state, action: PayloadAction<any>) => {
-                    state.error = action.payload
-                    state.isAuth = false
-                    state.isLoading = false
-                }
-            )
+            .addCase(registration.rejected, (state, action) => {
+                if (action.payload) state.error = action.payload
+                state.authStatus = AuthStatusEnum.Logout
+                state.isLoading = false
+            })
             .addCase(login.pending, (state) => {
                 state.isLoading = true
                 state.error = null
@@ -150,17 +156,47 @@ export const userSlice = createSlice({
                     state.id = action.payload.user.id
                     state.username = action.payload.user.username
                     state.email = action.payload.user.email
+                    if (action.payload.user.imagePath)
+                        state.imagePath = action.payload.user.imagePath
                     state.isLoading = false
-                    state.isAuth = true
+                    state.authStatus = AuthStatusEnum.Login
                     localStorage.setItem(
                         'token',
                         action.payload.tokens.accessToken
                     )
                 }
             )
-            .addCase(login.rejected, (state, action: PayloadAction<any>) => {
-                state.error = action.payload
-                state.isAuth = false
+            .addCase(login.rejected, (state, action) => {
+                if (action.payload) state.error = action.payload
+                localStorage.removeItem('token')
+                state.authStatus = AuthStatusEnum.Logout
+                state.isLoading = false
+            })
+            .addCase(checkAuth.pending, (state) => {
+                state.isLoading = true
+                state.error = null
+                localStorage.removeItem('token')
+            })
+            .addCase(
+                checkAuth.fulfilled,
+                (state, action: PayloadAction<IUserDate>) => {
+                    state.id = action.payload.user.id
+                    state.username = action.payload.user.username
+                    state.email = action.payload.user.email
+                    if (action.payload.user.imagePath)
+                        state.imagePath = action.payload.user.imagePath
+                    state.isLoading = false
+                    state.authStatus = AuthStatusEnum.Login
+                    localStorage.setItem(
+                        'token',
+                        action.payload.tokens.accessToken
+                    )
+                }
+            )
+            .addCase(checkAuth.rejected, (state, action) => {
+                if (action.payload) state.error = action.payload
+                localStorage.removeItem('token')
+                state.authStatus = AuthStatusEnum.Logout
                 state.isLoading = false
             })
             .addCase(setAvatar.pending, (state) => {

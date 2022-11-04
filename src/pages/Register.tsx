@@ -2,8 +2,9 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-import FormContainer from '../components/FormContainer'
-import RegisterForm from '../components/RegisterForm'
+import FormContainer from '../components/auth/FormContainer'
+import Preloader from '../components/Preloader'
+import RegisterForm from '../components/auth/RegisterForm'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { IRegisterDate } from '../models/models'
 import { errorIsShown, registration } from '../redux/features/userSlice'
@@ -12,15 +13,9 @@ import { titleStyle } from '../styles/form'
 const Register = () => {
     const dispatch = useAppDispatch()
 
-    const { isAuth, error } = useAppSelector((state) => state.user)
+    const { error, isLoading } = useAppSelector((state) => state.user)
 
     const navigate = useNavigate()
-    React.useEffect(() => {
-        if (isAuth) {
-            navigate('/avatar')
-        }
-    }, [isAuth])
-
     React.useEffect(() => {
         if (error) {
             toast.error(error)
@@ -29,7 +24,9 @@ const Register = () => {
     }, [error])
 
     const handleSubmit = async (values: IRegisterDate) => {
-        dispatch(registration(values))
+        dispatch(registration(values)).then((res: any) => {
+            if (!res.error) navigate('/setAvatar')
+        })
     }
 
     return (
@@ -44,6 +41,7 @@ const Register = () => {
                     </Link>
                 </p>
             </FormContainer>
+            {isLoading && <Preloader />}
         </>
     )
 }

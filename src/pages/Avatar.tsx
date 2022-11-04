@@ -1,6 +1,8 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import Preloader from '../components/Preloader'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { errorIsShown, setAvatar } from '../redux/features/userSlice'
 
@@ -19,10 +21,13 @@ const convertBase64 = (file: any) => {
 
 const Avatar = () => {
     const dispatch = useAppDispatch()
+    const { imagePath } = useAppSelector((state) => state.user)
     const [imageBase64, setImageBase64] = React.useState<string>('')
     const [file, setFile] = React.useState<Blob>()
 
-    const { error } = useAppSelector((state) => state.user)
+    const { error, isLoading } = useAppSelector((state) => state.user)
+
+    const navigate = useNavigate()
 
     React.useEffect(() => {
         if (error) {
@@ -30,6 +35,10 @@ const Avatar = () => {
             dispatch(errorIsShown())
         }
     }, [error])
+
+    React.useEffect(() => {
+        if (imagePath) navigate('/')
+    }, [imagePath])
 
     const handleSelectImage = async (
         e: React.ChangeEvent<HTMLInputElement>
@@ -49,50 +58,54 @@ const Avatar = () => {
 
     const handleSubmit = () => {
         if (file) dispatch(setAvatar(file))
+        else navigate('/')
     }
 
     return (
-        <div className='h-screen flex justify-center items-center'>
-            <div className='bg-second_bg rounded-[20px] p-[50px]'>
-                <h1 className='text-[30px] text-paragraph font-medium text-center pb-[50px]'>
-                    Add avatar for your profile
-                </h1>
-                <div className='mx-auto w-[200px] h-[200px] bg-white rounded-full border-[1.5px] border-gray_10 mb-[50px] truncate relative'>
-                    <img
-                        src={
-                            imageBase64.length > 0
-                                ? imageBase64
-                                : './assets/default-avatar.png'
-                        }
-                        className='absolute top-0 right-0 h-full object-cover z-0'
-                    />
-                    <label
-                        htmlFor='set-avatar'
-                        className='w-full bg-gray_10/70 h-[50px] text-center text-gray_60 cursor-pointer pt-[5px] absolute right-0 bottom-0 z-10'
-                    >
-                        select picture
-                    </label>
-                    <input
-                        id='set-avatar'
-                        type='file'
-                        accept='image/png, image/svg, image/jpeg'
-                        className='hidden'
-                        multiple={false}
-                        onChange={handleSelectImage}
-                    />
-                </div>
-                <div className='text-center'>
-                    <button
-                        onClick={handleSubmit}
-                        className={
-                            'inline-block bg-[#84C7AE] px-[50px] py-[20px] rounded-[23px] text-[25px] text-white'
-                        }
-                    >
-                        Set as profile picture
-                    </button>
+        <>
+            <div className='h-screen flex justify-center items-center'>
+                <div className='bg-second_bg rounded-[20px] p-[50px]'>
+                    <h1 className='text-[30px] text-paragraph font-medium text-center pb-[50px]'>
+                        Add avatar for your profile
+                    </h1>
+                    <div className='mx-auto w-[200px] h-[200px] bg-white rounded-full border-[1.5px] border-gray_10 mb-[50px] truncate relative'>
+                        <img
+                            src={
+                                imageBase64.length > 0
+                                    ? imageBase64
+                                    : './assets/default-avatar.png'
+                            }
+                            className='absolute top-0 right-0 h-full object-cover z-0'
+                        />
+                        <label
+                            htmlFor='set-avatar'
+                            className='w-full bg-gray_10/70 h-[50px] text-center text-gray_60 cursor-pointer pt-[5px] absolute right-0 bottom-0 z-10'
+                        >
+                            select picture
+                        </label>
+                        <input
+                            id='set-avatar'
+                            type='file'
+                            accept='image/png, image/svg, image/jpeg'
+                            className='hidden'
+                            multiple={false}
+                            onChange={handleSelectImage}
+                        />
+                    </div>
+                    <div className='text-center'>
+                        <button
+                            onClick={handleSubmit}
+                            className={
+                                'inline-block bg-[#84C7AE] px-[50px] py-[20px] rounded-[23px] text-[25px] text-white'
+                            }
+                        >
+                            Set as profile picture
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+            {isLoading && <Preloader />}
+        </>
     )
 }
 

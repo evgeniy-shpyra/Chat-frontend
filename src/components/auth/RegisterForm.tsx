@@ -8,9 +8,8 @@ import {
     buttonStyle,
     errorFieldStyle,
     fieldStyle,
-} from '../styles/form'
-import { IRegisterDate } from '../models/models'
-
+} from '../../styles/form'
+import { IRegisterDate } from '../../models/models'
 
 export interface IRegisterFields extends IRegisterDate {
     confirmPassword: string
@@ -35,7 +34,6 @@ const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
         password: '',
         confirmPassword: '',
     }
-
 
     const onSubmit = (values: IRegisterFields, actions: any) => {
         if (values.password != values.confirmPassword) {
@@ -141,17 +139,13 @@ const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
                             </div>
                         </div>
                         <div className='text-center'>
-                            <button
-                                className={`${buttonStyle} `}
-                                type='submit'
-                            >
+                            <button className={`${buttonStyle} `} type='submit'>
                                 Create account
                             </button>
                         </div>
                     </Form>
                 )}
             </Formik>
-           
         </>
     )
 }

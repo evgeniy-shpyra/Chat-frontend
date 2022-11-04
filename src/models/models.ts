@@ -11,19 +11,31 @@ export interface IRegisterDate {
     password: string
 }
 
+export enum AuthStatusEnum {
+    Unknown = 0,
+    Logout = 1,
+    Login = 2,
+}
+
+//response
+
+export enum OwnerOfMassageEnum {
+    My = 0,
+    NotMine = 1
+}
+
 export interface IUserDate {
     user: {
         id: number
         username: string
         email: string
+        imagePath?: string
     }
     tokens: {
         accessToken: string
         refreshToken: string
     }
 }
-
-//response
 
 export interface IResponseUserData extends IUserDate {
     data: IUserDate
@@ -36,3 +48,4 @@ export interface IResponseAvatarData {
     resultCode: ResultCode
     msg?: string
 }
+
