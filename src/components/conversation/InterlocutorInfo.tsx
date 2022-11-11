@@ -5,7 +5,7 @@ interface HeaderBarProps {
     avatarUrl: string
 }
 
-const HeaderBar = ({ name, avatarUrl }: HeaderBarProps) => {
+const InterlocutorInfo = ({ name, avatarUrl }: HeaderBarProps) => {
     return (
         <div className='flex-none h-[80px] bg-background_1 border-b-2 flex justify-between items-center px-[25px]'>
             <h3 className='flex-none text-paragraph font-medium text-[20px]'>
@@ -19,4 +19,4 @@ const HeaderBar = ({ name, avatarUrl }: HeaderBarProps) => {
     )
 }
 
-export default HeaderBar
+export default InterlocutorInfo

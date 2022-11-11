@@ -20,6 +20,8 @@ module.exports = {
                 background_5: '#B9E3D3',
                 paragraph: '#32403B',
                 second_bg: '#F6FBF9',
+                error: '#FF3C3C',
+                success: '#009821',
             },
         },
         fontFamily: {

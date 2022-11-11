@@ -6,12 +6,12 @@ import LoginForm from '../components/auth/LoginForm'
 import Preloader from '../components/Preloader'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { ILoginDate } from '../models/models'
-import { errorIsShown, login } from '../redux/features/userSlice'
+import { errorIsShown, login } from '../redux/features/authSlice'
 import { titleStyle } from '../styles/form'
 
 const Login = () => {
     const dispatch = useAppDispatch()
-    const { error, isLoading } = useAppSelector((state) => state.user)
+    const { error, isLoading } = useAppSelector((state) => state.auth)
 
     const navigate = useNavigate()
 
@@ -40,7 +40,6 @@ const Login = () => {
                     </Link>
                 </p>
             </FormContainer>
-            {isLoading && <Preloader />}
         </>
     )
 }

@@ -6,14 +6,16 @@ import FormContainer from '../components/auth/FormContainer'
 import Preloader from '../components/Preloader'
 import RegisterForm from '../components/auth/RegisterForm'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { IRegisterDate } from '../models/models'
-import { errorIsShown, registration } from '../redux/features/userSlice'
+import { IOtherUserData, IRegisterDate } from '../models/models'
+import { errorIsShown, registration } from '../redux/features/authSlice'
 import { titleStyle } from '../styles/form'
 
-const Register = () => {
+interface RegisterProps {}
+
+const Register: React.FC<RegisterProps> = () => {
     const dispatch = useAppDispatch()
 
-    const { error, isLoading } = useAppSelector((state) => state.user)
+    const { error } = useAppSelector((state) => state.auth)
 
     const navigate = useNavigate()
     React.useEffect(() => {
@@ -24,9 +26,7 @@ const Register = () => {
     }, [error])
 
     const handleSubmit = async (values: IRegisterDate) => {
-        dispatch(registration(values)).then((res: any) => {
-            if (!res.error) navigate('/setAvatar')
-        })
+        dispatch(registration(values))
     }
 
     return (
@@ -41,7 +41,6 @@ const Register = () => {
                     </Link>
                 </p>
             </FormContainer>
-            {isLoading && <Preloader />}
         </>
     )
 }

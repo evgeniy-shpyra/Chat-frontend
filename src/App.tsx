@@ -3,16 +3,18 @@ import { Routes, Route, useNavigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { useAppDispatch, useAppSelector } from './hooks/reduxHooks'
 import { AuthStatusEnum } from './models/models'
-import Avatar from './pages/Avatar'
 import Main from './pages/Main'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import { checkAuth } from './redux/features/userSlice'
+import { checkAuth } from './redux/features/authSlice'
+import Preloader from './components/Preloader'
+import { WebSocketContext } from './WebSocket'
 
-export default function App() {
+const App: React.FC = () => {
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
-    const { authStatus } = useAppSelector((state) => state.user)
+    const { authStatus, isLoading } = useAppSelector((state) => state.auth)
+
 
     React.useEffect(() => {
         if (localStorage.getItem('token')) dispatch(checkAuth())
@@ -23,17 +25,28 @@ export default function App() {
         if (authStatus === AuthStatusEnum.Logout) navigate('/login')
     }, [authStatus])
 
+    // const ws = React.useContext(WebSocketContext)
+
+    // console.log(ws)
+
     return (
-        <React.StrictMode>
+        // <React.StrictMode>
+        <>
             <div className='w-screen font-main bg-background_1'>
                 <Routes>
                     <Route path='/*' element={<Main />} />
-                    <Route path='/register' element={<Register />} />
+                    <Route
+                        path='/register'
+                        element={<Register />}
+                    />
                     <Route path='/login' element={<Login />} />
-                    <Route path='/setAvatar' element={<Avatar />} />
                 </Routes>
                 <ToastContainer position='bottom-right' theme='light' />
             </div>
-        </React.StrictMode>
+            {isLoading && <Preloader />}
+        </>
+        // </React.StrictMode>
     )
 }
+
+export default App

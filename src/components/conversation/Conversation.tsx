@@ -1,7 +1,7 @@
 import React from 'react'
-import Massages from './Massages'
-import HeaderBar from './HeaderBar'
+import InterlocutorInfo from './InterlocutorInfo'
 import InputMassage from './InputMassage'
+import ListOfMassages from './ListOfMassages'
 
 const data = {
     name: 'Alex1',
@@ -10,16 +10,16 @@ const data = {
         'https://ev-chat-images.s3.eu-north-1.amazonaws.com/1667232249540-4.jpg',
 }
 
-const Chat = () => {
+const Conversation = () => {
     return (
         <div className='flex-auto w-full bg-background_4 relative flex flex-col'>
-            <HeaderBar name={data.name} avatarUrl={data.avatarUrl} />
+            <InterlocutorInfo name={data.name} avatarUrl={data.avatarUrl} />
             <div className='flex-auto h-full pr-[5px] overflow-hidden flex flex-col justify-end'>
-                <Massages />
+                <ListOfMassages />
             </div>
             <InputMassage />
         </div>
     )
 }
 
-export default Chat
+export default Conversation

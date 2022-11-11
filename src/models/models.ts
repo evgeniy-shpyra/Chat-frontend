@@ -1,5 +1,3 @@
-import { ResultCode } from '../api/index'
-
 export interface ILoginDate {
     username: string
     password: string
@@ -21,7 +19,7 @@ export enum AuthStatusEnum {
 
 export enum OwnerOfMassageEnum {
     My = 0,
-    NotMine = 1
+    NotMine = 1,
 }
 
 export interface IUserDate {
@@ -29,7 +27,7 @@ export interface IUserDate {
         id: number
         username: string
         email: string
-        imagePath?: string
+        image_path?: string
     }
     tokens: {
         accessToken: string
@@ -37,15 +35,22 @@ export interface IUserDate {
     }
 }
 
-export interface IResponseUserData extends IUserDate {
-    data: IUserDate
-    resultCode: ResultCode
-    msg?: string
+export interface IOtherUserData {
+    user_id: number
+    username: string
+    email: string
+    imagepath: string | null
 }
 
-export interface IResponseAvatarData {
-    path: string
-    resultCode: ResultCode
-    msg?: string
+export interface IDialogueData {
+    dialogue_id: number
+    user_id: number
+    username: string
+    email: string
+    image_path: string
 }
 
+export interface IMessagesData {
+    user_id: number
+    text: string
+}

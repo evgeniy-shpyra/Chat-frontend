@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Preloader from '../components/Preloader'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
-import { errorIsShown, setAvatar } from '../redux/features/userSlice'
+import { errorIsShown, setAvatar } from '../redux/features/authSlice'
 
 const convertBase64 = (file: any) => {
     return new Promise((resolve, reject) => {
@@ -21,11 +21,11 @@ const convertBase64 = (file: any) => {
 
 const Avatar = () => {
     const dispatch = useAppDispatch()
-    const { imagePath } = useAppSelector((state) => state.user)
+    const { imagePath } = useAppSelector((state) => state.auth)
     const [imageBase64, setImageBase64] = React.useState<string>('')
     const [file, setFile] = React.useState<Blob>()
 
-    const { error, isLoading } = useAppSelector((state) => state.user)
+    const { error, isLoading } = useAppSelector((state) => state.auth)
 
     const navigate = useNavigate()
 
@@ -63,7 +63,7 @@ const Avatar = () => {
 
     return (
         <>
-            <div className='h-screen flex justify-center items-center'>
+            <div className='flex justify-center items-center w-full'>
                 <div className='bg-second_bg rounded-[20px] p-[50px]'>
                     <h1 className='text-[30px] text-paragraph font-medium text-center pb-[50px]'>
                         Add avatar for your profile

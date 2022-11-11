@@ -1,20 +1,23 @@
 import React from 'react'
-import { Link, Route, Routes, useNavigate } from 'react-router-dom'
-import Chat from '../components/chat/Chat'
-import Dialogues from '../components/dialogs/Dialogues'
-import Friends from '../components/Friends'
-import Menu from '../components/Menu'
+import { Route, Routes } from 'react-router-dom'
+import Chat from './Chat'
+import { useAppSelector } from '../hooks/reduxHooks'
+import { AuthStatusEnum } from '../models/models'
 
-const Main = () => {
+import Avatar from './Avatar'
+
+const Main: React.FC = () => {
+    const { authStatus, id } = useAppSelector((state) => state.auth)
+
     return (
-        <div className='h-screen overflow-hidden flex'>
-            <Menu />
-            <Dialogues />
-            <Routes>
-                <Route path='/' element={<Chat />} />
-                <Route path='/friends' element={<Friends />} />
-            </Routes>
-        </div>
+        <>
+            {authStatus === AuthStatusEnum.Login && (
+                <Routes>
+                    <Route path='/*' element={<Chat />} />
+                    <Route path='/setAvatar' element={<Avatar />} />
+                </Routes>
+            )}
+        </>
     )
 }
 

@@ -19,13 +19,8 @@ const InputMassage = () => {
                     <Form>
                         <button
                             type='submit'
-                            className='absolute right-[30px] top-2/4 -translate-y-[13.5px]'
-                        >
-                            <img
-                                src='./assets/icons/arrow_right.svg'
-                                className='w-[40px] h-[27px] object-cover'
-                            />
-                        </button>
+                            className='absolute right-[30px] top-2/4 -translate-y-[12px] _icon-arrow-right text-gray_30 text-[24px]'
+                        />                                                       
                         <Field
                             id='massage'
                             name='massage'

@@ -1,17 +1,17 @@
-import { AuthStatusEnum } from './../../models/models'
-import { RootState } from '../store'
+import { chatAPI } from './../../api/endpoints/chatAPI'
+import { AuthStatusEnum } from '../../models/models'
+import { AppDispatch, RootState } from '../store'
 import { ResultCode } from '../../api/index'
 import { ILoginDate, IRegisterDate } from '../../models/models'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { IUserDate } from '../../models/models'
 import authAPI from '../../api/endpoints/authAPI'
-import UserAPI from '../../api/endpoints/userAPI'
 
 export const registration = createAsyncThunk<
     IUserDate,
     IRegisterDate,
     { rejectValue: string }
->('user/registration', async (values, { rejectWithValue }) => {
+>('auth/registration', async (values, { rejectWithValue }) => {
     try {
         const response = await authAPI.registration(values)
 
@@ -27,13 +27,15 @@ export const registration = createAsyncThunk<
 export const login = createAsyncThunk<
     IUserDate,
     ILoginDate,
-    { rejectValue: string }
->('user/login', async (values, thunkAPI) => {
+    { rejectValue: string; dispatch: AppDispatch }
+>('auth/login', async (values, thunkAPI) => {
     try {
         const response = await authAPI.login(values)
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
+
+        // chatAPI.subscribe(thunkAPI.dispatch, response.data.data.user.user_id)
 
         return response.data.data
     } catch (err) {
@@ -44,13 +46,15 @@ export const login = createAsyncThunk<
 export const checkAuth = createAsyncThunk<
     IUserDate,
     undefined,
-    { rejectValue: string }
->('user/checkauth', async (_, { rejectWithValue }) => {
+    { rejectValue: string; dispatch: AppDispatch }
+>('auth/checkauth', async (_, { rejectWithValue, dispatch }) => {
     try {
         const response = await authAPI.refresh()
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
+
+        chatAPI.subscribe(dispatch, response.data.data.user.id)
 
         return response.data.data
     } catch (err) {
@@ -62,9 +66,9 @@ export const setAvatar = createAsyncThunk<
     string,
     Blob,
     { state: RootState; rejectValue: string }
->('user/setAvatar', async (file, thunkAPI) => {
+>('auth/setAvatar', async (file, thunkAPI) => {
     try {
-        const userId = thunkAPI.getState().user.id
+        const userId = thunkAPI.getState().auth.id
 
         const formData = new FormData()
 
@@ -74,7 +78,7 @@ export const setAvatar = createAsyncThunk<
             throw new Error('The user is not authorized')
         }
 
-        const response = await UserAPI.setAvatar({
+        const response = await authAPI.setAvatar({
             file: formData,
             id: userId,
         })
@@ -108,8 +112,8 @@ const initialState: IInitialState = {
     authStatus: AuthStatusEnum.Unknown,
 }
 
-export const userSlice = createSlice({
-    name: 'user',
+export const authSlice = createSlice({
+    name: 'auth',
     initialState,
     reducers: {
         errorIsShown(state) {
@@ -149,6 +153,13 @@ export const userSlice = createSlice({
             .addCase(login.pending, (state) => {
                 state.isLoading = true
                 state.error = null
+                state.id = null
+                state.username = null
+                state.email = null
+                state.imagePath = null
+                state.isLoading = true
+                state.error = null
+                state.authStatus = AuthStatusEnum.Unknown
             })
             .addCase(
                 login.fulfilled,
@@ -156,8 +167,8 @@ export const userSlice = createSlice({
                     state.id = action.payload.user.id
                     state.username = action.payload.user.username
                     state.email = action.payload.user.email
-                    if (action.payload.user.imagePath)
-                        state.imagePath = action.payload.user.imagePath
+                    if (action.payload.user.image_path)
+                        state.imagePath = action.payload.user.image_path
                     state.isLoading = false
                     state.authStatus = AuthStatusEnum.Login
                     localStorage.setItem(
@@ -183,8 +194,8 @@ export const userSlice = createSlice({
                     state.id = action.payload.user.id
                     state.username = action.payload.user.username
                     state.email = action.payload.user.email
-                    if (action.payload.user.imagePath)
-                        state.imagePath = action.payload.user.imagePath
+                    if (action.payload.user.image_path)
+                        state.imagePath = action.payload.user.image_path
                     state.isLoading = false
                     state.authStatus = AuthStatusEnum.Login
                     localStorage.setItem(
@@ -217,6 +228,6 @@ export const userSlice = createSlice({
     },
 })
 
-export const { errorIsShown } = userSlice.actions
+export const { errorIsShown } = authSlice.actions
 
-export default userSlice.reducer
+export default authSlice.reducer
