@@ -30,7 +30,7 @@ export const addDialogueAsync = createAsyncThunk<
         const response = await DialoguesAPI.addDialogue(id)
 
         if (response.data.resultCode === ResultCode.Error)
-            throw new Error(response.data.msg)
+            throw new Error(response.data.msg) 
 
         chatAPI.addDialogue(
             response.data.data.dialogue_id,
