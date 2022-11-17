@@ -5,16 +5,15 @@ import App from './App'
 import { Provider } from 'react-redux'
 import store from './redux/store'
 import { BrowserRouter } from 'react-router-dom'
-import WebSocketProvider from './WebSocket'
-
+import { SkeletonTheme } from 'react-loading-skeleton'
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(
     <Provider store={store}>
-        {/* <WebSocketProvider> */}
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-        {/* </WebSocketProvider> */}
+        <SkeletonTheme baseColor="#8dd8bb" highlightColor="#a7e9d0">
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </SkeletonTheme>
     </Provider>
 )

@@ -10,9 +10,8 @@ export const fetchAllUsers = createAsyncThunk<
     { rejectValue: string; state: RootState }
 >('users/fetchAllUsers', async (_, { rejectWithValue, getState }) => {
     try {
-        const myId = getState().auth.id
-
-        const response = await UsersAPI.getAllUsers(myId ? myId : 0)
+        const uploadPage = getState().users.currentUploadPage + 1
+        const response = await UsersAPI.getAllUsers(uploadPage)
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
@@ -30,13 +29,15 @@ interface IInitialState {
         email: string
         imagepath: string | null
     }>
-    isLoadingUsers: boolean
+    currentUploadPage: number
+    isLoading: boolean
     error: string | null
 }
 
 const initialState: IInitialState = {
     users: [],
-    isLoadingUsers: false,
+    currentUploadPage: -1,
+    isLoading: false,
     error: null,
 }
 
@@ -52,18 +53,21 @@ export const usersSlice = createSlice({
         builder
             .addCase(fetchAllUsers.pending, (state) => {
                 state.error = null
-                state.isLoadingUsers = true
+                state.isLoading = true
             })
             .addCase(
                 fetchAllUsers.fulfilled,
                 (state, action: PayloadAction<Array<IOtherUserData>>) => {
-                    state.users = action.payload
-                    state.isLoadingUsers = false
+                    if (action.payload.length != 0) {
+                        state.users = [...state.users, ...action.payload]
+                            state.currentUploadPage += 1
+                    }
+                    state.isLoading = false
                 }
             )
             .addCase(fetchAllUsers.rejected, (state, action) => {
                 if (action.payload) state.error = action.payload
-                state.isLoadingUsers = false
+                state.isLoading = false
             })
     },
 })

@@ -6,10 +6,7 @@ import {
 } from '../../models/responseModels'
 import { IRegisterDate } from '../../models/models'
 
-interface ISetAvatarData {
-    file: FormData
-    id: number
-}
+
 
 class AuthAPI {
     static registration = (values: IRegisterDate) => {
@@ -23,10 +20,10 @@ class AuthAPI {
             withCredentials: true,
         })
     }
-    static setAvatar = (values: ISetAvatarData) => {
+    static setAvatar = (file: FormData) => {
         return instance.post<IResponseAvatarData>(
-            `/setavatar/${values.id}`,
-            values.file
+            `/set-avatar`,
+            file
         )
     }
 }

@@ -1,18 +1,21 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAppDispatch } from '../../hooks/reduxHooks'
+import { openUsersWindow } from '../../redux/features/appSlice'
 import InputSearch from '../InputSearch'
 
 const ToolsForDialogues = () => {
     const [searchValue, setSearchValue] = React.useState<string>('')
 
     const navigate = useNavigate()
+    const dispatch = useAppDispatch()
 
     const handleChangeSearchValue = (value: string) => {
         setSearchValue(value)
     }
 
     const handleClickToButton = () => {
-        navigate('/users')
+        dispatch(openUsersWindow())
     }
 
     return (

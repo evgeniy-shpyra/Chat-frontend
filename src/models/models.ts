@@ -17,9 +17,9 @@ export enum AuthStatusEnum {
 
 //response
 
-export enum OwnerOfMassageEnum {
-    My = 0,
-    NotMine = 1,
+export enum StatusWindowEnum {
+    Open = 0,
+    Close = 1,
 }
 
 export interface IUserDate {
@@ -51,6 +51,14 @@ export interface IDialogueData {
 }
 
 export interface IMessagesData {
-    user_id: number
+    message_id: number
     text: string
+    date: string
+    owner_user_id: number
+}
+
+export interface IConversationData {
+    massages: IMessagesData[]
+    interlocutorUser: { user_id: number; username: string; image_path: string }
+    dialogueId: number
 }

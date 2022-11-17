@@ -15,9 +15,15 @@ interface RegisterProps {}
 const Register: React.FC<RegisterProps> = () => {
     const dispatch = useAppDispatch()
 
-    const { error } = useAppSelector((state) => state.auth)
+    const { error, authStatus } = useAppSelector((state) => state.auth)
 
     const navigate = useNavigate()
+
+    React.useEffect(() => {
+        
+    }, [authStatus])
+
+
     React.useEffect(() => {
         if (error) {
             toast.error(error)
@@ -26,7 +32,10 @@ const Register: React.FC<RegisterProps> = () => {
     }, [error])
 
     const handleSubmit = async (values: IRegisterDate) => {
-        dispatch(registration(values))
+        dispatch(registration(values)).then((res)=> {
+            if(res.meta.requestStatus === 'fulfilled')
+                navigate('/set-avatar')
+        } )
     }
 
     return (

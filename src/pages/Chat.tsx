@@ -1,22 +1,24 @@
 import React from 'react'
-import ListOfDialogues from '../components/dialogues/ListOfDialogues'
-import SideMenu from '../components/SideMenu'
-import { Route, Routes } from 'react-router-dom'
-import Users from '../components/users/Users'
-import Conversation from '../components/conversation/Conversation'
+import Dialogues from '../components/dialogues/Dialogues'
 
-const Chat = () => {
+import { Route, Routes } from 'react-router-dom'
+import Conversation from '../components/conversation/Conversation'
+import EmptyConversation from '../components/conversation/EmptyConversation'
+import ModalWindows from '../components/ModalWindows'
+import Menu from '../components/Menu'
+
+const Chat = React.memo(() => {
     return (
         <div className='flex h-screen'>
-            <SideMenu>
-                <ListOfDialogues />
-            </SideMenu>
-            <Conversation />
+            <Menu />
+            <Dialogues />
             <Routes>
-                <Route path='/users' element={<Users />} />
+                <Route path='/:id' element={<Conversation />} />
+                <Route path='/' element={<EmptyConversation />} />
             </Routes>
+            <ModalWindows />
         </div>
     )
-}
+})
 
 export default Chat

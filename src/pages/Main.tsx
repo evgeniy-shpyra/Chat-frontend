@@ -4,7 +4,7 @@ import Chat from './Chat'
 import { useAppSelector } from '../hooks/reduxHooks'
 import { AuthStatusEnum } from '../models/models'
 
-import Avatar from './Avatar'
+import SetAvatar from './SetAvatar'
 
 const Main: React.FC = () => {
     const { authStatus, id } = useAppSelector((state) => state.auth)
@@ -14,7 +14,7 @@ const Main: React.FC = () => {
             {authStatus === AuthStatusEnum.Login && (
                 <Routes>
                     <Route path='/*' element={<Chat />} />
-                    <Route path='/setAvatar' element={<Avatar />} />
+                    <Route path='/set-avatar' element={<SetAvatar />} />
                 </Routes>
             )}
         </>

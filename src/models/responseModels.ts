@@ -38,8 +38,13 @@ export interface IResponseDialoguesData {
 }
 
 export interface IResponseConversationData {
-    data: Array<models.IMessagesData>
+    data: models.IConversationData
     resultCode: ResultCode
     msg?: string
 }
 
+export interface IResponseMessageData {
+    data: models.IMessagesData
+    resultCode: ResultCode
+    msg?: string
+}

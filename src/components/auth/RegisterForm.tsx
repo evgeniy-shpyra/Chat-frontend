@@ -1,5 +1,5 @@
 import React from 'react'
-import { Formik, Form, Field } from 'formik'
+import { Formik, Form, Field, FormikHelpers } from 'formik'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import {
@@ -35,13 +35,15 @@ const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
         confirmPassword: '',
     }
 
-    const onSubmit = (values: IRegisterFields, actions: any) => {
+    const onSubmit = (
+        values: IRegisterFields,
+        { setFieldError }: FormikHelpers<IRegisterFields>
+    ) => {
         if (values.password != values.confirmPassword) {
-            actions.setErrors({
-                confirmPassword: true,
-                password: true,
-            })
-            toast.error('Confirm password must be the same as the password')
+
+            setFieldError('password', 'Confirm password must be the same as the password')
+
+            // toast.error('Confirm password must be the same as the password')
         } else {
             handleSubmit({
                 username: values.username,

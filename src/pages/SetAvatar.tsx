@@ -1,10 +1,10 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Preloader from '../components/Preloader'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { errorIsShown, setAvatar } from '../redux/features/authSlice'
+import defaultImage from '../assets/default-avatar.png'
 
 const convertBase64 = (file: any) => {
     return new Promise((resolve, reject) => {
@@ -19,9 +19,9 @@ const convertBase64 = (file: any) => {
     })
 }
 
-const Avatar = () => {
+const SetAvatar = () => {
     const dispatch = useAppDispatch()
-    const { imagePath } = useAppSelector((state) => state.auth)
+
     const [imageBase64, setImageBase64] = React.useState<string>('')
     const [file, setFile] = React.useState<Blob>()
 
@@ -36,9 +36,9 @@ const Avatar = () => {
         }
     }, [error])
 
-    React.useEffect(() => {
-        if (imagePath) navigate('/')
-    }, [imagePath])
+    // React.useEffect(() => {
+    //     if (imagePath) navigate('/')
+    // }, [imagePath])
 
     const handleSelectImage = async (
         e: React.ChangeEvent<HTMLInputElement>
@@ -57,13 +57,16 @@ const Avatar = () => {
     }
 
     const handleSubmit = () => {
-        if (file) dispatch(setAvatar(file))
+        if (file)
+            dispatch(setAvatar(file)).then((res) => {
+                if (res.meta.requestStatus === 'fulfilled') navigate('/')
+            })
         else navigate('/')
     }
 
     return (
         <>
-            <div className='flex justify-center items-center w-full'>
+            <div className='flex justify-center items-center w-full h-screen'>
                 <div className='bg-second_bg rounded-[20px] p-[50px]'>
                     <h1 className='text-[30px] text-paragraph font-medium text-center pb-[50px]'>
                         Add avatar for your profile
@@ -73,7 +76,7 @@ const Avatar = () => {
                             src={
                                 imageBase64.length > 0
                                     ? imageBase64
-                                    : './assets/default-avatar.png'
+                                    : defaultImage
                             }
                             className='absolute top-0 right-0 h-full object-cover z-0'
                         />
@@ -109,4 +112,4 @@ const Avatar = () => {
     )
 }
 
-export default Avatar
+export default SetAvatar

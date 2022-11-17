@@ -10,13 +10,15 @@ import authAPI from '../../api/endpoints/authAPI'
 export const registration = createAsyncThunk<
     IUserDate,
     IRegisterDate,
-    { rejectValue: string }
->('auth/registration', async (values, { rejectWithValue }) => {
+    { rejectValue: string; dispatch: AppDispatch }
+>('auth/registration', async (values, { dispatch, rejectWithValue }) => {
     try {
         const response = await authAPI.registration(values)
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
+        
+        chatAPI.subscribe(dispatch, response.data.data.user.id)
 
         return response.data.data
     } catch (err) {
@@ -36,7 +38,7 @@ export const login = createAsyncThunk<
             throw new Error(response.data.msg)
 
         // chatAPI.subscribe(thunkAPI.dispatch, response.data.data.user.user_id)
-
+        chatAPI.subscribe(thunkAPI.dispatch, response.data.data.user.id)
         return response.data.data
     } catch (err) {
         return thunkAPI.rejectWithValue((err as Error).message)
@@ -78,10 +80,7 @@ export const setAvatar = createAsyncThunk<
             throw new Error('The user is not authorized')
         }
 
-        const response = await authAPI.setAvatar({
-            file: formData,
-            id: userId,
-        })
+        const response = await authAPI.setAvatar(formData)
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
