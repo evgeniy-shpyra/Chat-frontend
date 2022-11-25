@@ -5,8 +5,10 @@ import {
 import instance from '..'
 
 class DialoguesAPI {
-    static getDialogues = () => {
-        return instance.get<IResponseDialoguesData>(`/dialogues`)
+    static getDialogues = (uploadPage: number, name: string | null) => {
+        return instance.get<IResponseDialoguesData>(`/dialogues`, {
+            params: { page: uploadPage, name },
+        })
     }
     static addDialogue = (id: number) => {
         return instance.post<IResponseDialogueData>(`/dialogue/${id}`, {

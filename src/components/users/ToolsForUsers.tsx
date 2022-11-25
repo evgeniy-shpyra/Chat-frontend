@@ -1,35 +1,46 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
+import {
+    changeValueForSearchingUsers,
+    fetchUsers,
+} from '../../redux/features/usersSlice'
 import InputSearch from '../InputSearch'
+import { debounce } from 'lodash'
 
 interface ToolsForUsersProps {
     handleClose: () => void
 }
 
 const ToolsForUsers: React.FC<ToolsForUsersProps> = ({ handleClose }) => {
-    // const navigate = useNavigate()
+    // const [searchValue, setSearchValue] = React.useState('')
+    const dispatch = useAppDispatch()
+    const { valueForSearching } = useAppSelector((state) => state.users)
 
-    const [searchValue, setSearchValue] = React.useState('')
+    const debouncedSearch = React.useRef(
+        debounce(() => {
+            dispatch(fetchUsers())
+        }, 300)
+    ).current
 
     const handleChangeSearchValue = (value: string) => {
-        setSearchValue(value)
+        dispatch(changeValueForSearchingUsers(value))
+        debouncedSearch()
     }
 
     const handleClickOnButton = () => {
-        // navigate(-1)
         handleClose()
     }
 
     return (
         <div className='w-full flex-none pb-[20px] flex'>
             <InputSearch
-                value={searchValue}
+                value={valueForSearching}
                 handleChangeValue={handleChangeSearchValue}
                 inputStyles='border'
             />
             <button
                 onClick={handleClickOnButton}
-                className='flex-none h-[55px] w-[55px] _icon-close-with-circle text-[55px] ml-[15px] text-gray_30'
+                className='flex-none h-[55px] w-[55px] _icon-close-with-circle text-[55px]  ml-[15px] text-gray_20 transition-colors hover:text-gray_30'
             ></button>
         </div>
     )

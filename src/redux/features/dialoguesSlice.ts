@@ -1,3 +1,4 @@
+import { AppDispatch, RootState } from './../store'
 import { chatAPI } from './../../api/endpoints/chatAPI'
 import { ResultCode } from './../../api/index'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
@@ -7,13 +8,20 @@ import { IDialogueData } from '../../models/models'
 export const fetchDialogues = createAsyncThunk<
     Array<IDialogueData>,
     undefined,
-    { rejectValue: string }
->('dialogs/fetchDialogues', async (_, { rejectWithValue }) => {
+    { rejectValue: string; state: RootState }
+>('dialogs/fetchDialogues', async (_, { rejectWithValue, getState }) => {
     try {
-        const response = await DialoguesAPI.getDialogues()
+        const uploadPage = getState().dialogue.currentUploadPage + 1
+        const valueForSearching = getState().dialogue.valueForSearching
+
+        const response = await DialoguesAPI.getDialogues(
+            uploadPage,
+            valueForSearching
+        )
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
+
 
         return response.data.data
     } catch (err: any) {
@@ -24,13 +32,13 @@ export const fetchDialogues = createAsyncThunk<
 export const addDialogueAsync = createAsyncThunk<
     IDialogueData,
     number,
-    { rejectValue: string }
->('dialogs/addDialogue', async (id, { rejectWithValue }) => {
+    { rejectValue: string; dispatch: AppDispatch }
+>('dialogs/addDialogue', async (id, { rejectWithValue, dispatch }) => {
     try {
         const response = await DialoguesAPI.addDialogue(id)
 
         if (response.data.resultCode === ResultCode.Error)
-            throw new Error(response.data.msg) 
+            throw new Error(response.data.msg)
 
         chatAPI.addDialogue(
             response.data.data.dialogue_id,
@@ -65,12 +73,16 @@ export const addDialogueAsync = createAsyncThunk<
 interface initialState {
     dialogues: Array<IDialogueData>
     error: string | null
+    valueForSearching: string
     isLoading: boolean
+    currentUploadPage: number
 }
 
 const initialState: initialState = {
     dialogues: [],
     error: null,
+    valueForSearching: '',
+    currentUploadPage: -1,
     isLoading: false,
 }
 
@@ -79,8 +91,38 @@ export const dialogueSlice = createSlice({
     initialState,
     reducers: {
         addDialogue: (state, action: PayloadAction<IDialogueData>) => {
-            // console.log('action.payload', action.payload)
             state.dialogues.unshift(action.payload)
+        },
+        changeValueForSearchingDialogues(state, action: PayloadAction<string>) {
+            if (state.valueForSearching === '' || action.payload === '') {
+                state.currentUploadPage = -1
+                state.dialogues = []
+                state.isLoading = true
+            }
+            state.valueForSearching = action.payload
+        },
+        updateMessageInDialogue(
+            state,
+            action: PayloadAction<{
+                text: string
+                date: string
+                dialogueId: number
+            }>
+        ) {
+            const index = state.dialogues.findIndex(
+                (item) => item.dialogue_id === action.payload.dialogueId
+            )
+
+            if (index < 0) return
+
+            const updatedDialogue = {
+                ...state.dialogues[index],
+                text: action.payload.text,
+                date: action.payload.date,
+            }
+
+            state.dialogues.splice(index, 1)
+            state.dialogues.unshift(updatedDialogue)
         },
     },
     extraReducers(builder) {
@@ -91,7 +133,16 @@ export const dialogueSlice = createSlice({
             .addCase(
                 fetchDialogues.fulfilled,
                 (state, action: PayloadAction<Array<IDialogueData>>) => {
-                    state.dialogues = action.payload
+                    if (state.valueForSearching === '') {
+                        if (action.payload.length != 0)
+                            state.dialogues = [
+                                ...state.dialogues,
+                                ...action.payload,
+                            ]
+                        state.currentUploadPage += 1
+                    } else {
+                        state.dialogues = action.payload
+                    }
                     state.isLoading = false
                 }
             )
@@ -116,6 +167,10 @@ export const dialogueSlice = createSlice({
     },
 })
 
-export const { addDialogue } = dialogueSlice.actions
+export const {
+    addDialogue,
+    changeValueForSearchingDialogues,
+    updateMessageInDialogue,
+} = dialogueSlice.actions
 
 export default dialogueSlice.reducer

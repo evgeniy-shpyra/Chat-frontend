@@ -2,7 +2,6 @@ import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../../hooks/reduxHooks'
 import { closeUsersWindow } from '../../redux/features/appSlice'
-import { fetchAllUsers } from '../../redux/features/usersSlice'
 import InputSearch from '../InputSearch'
 import ListOfUsers from './ListOfUsers'
 import ToolsForUsers from './ToolsForUsers'
@@ -10,12 +9,7 @@ import ToolsForUsers from './ToolsForUsers'
 const Users = () => {
     const dispatch = useAppDispatch()
     const backgroundRef = React.useRef<HTMLDivElement>(null)
-
-
-    React.useEffect(() => {
-        dispatch(fetchAllUsers())
-    }, [])
-
+ 
     const handleClose = () => {
         dispatch(closeUsersWindow())
     }

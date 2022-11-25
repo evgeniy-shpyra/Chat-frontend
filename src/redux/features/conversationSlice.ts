@@ -1,10 +1,12 @@
+import { IResponseMessageData } from './../../models/responseModels'
+import { IMessageGetSocket } from './../../models/socketModels'
 import { chatAPI } from './../../api/endpoints/chatAPI'
-import { RootState } from './../store'
+import { AppDispatch, RootState } from './../store'
 import { IConversationData, IMessagesData } from './../../models/models'
 import { ResultCode } from '../../api/index'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import DialoguesAPI from '../../api/endpoints/dialoguesAPI'
 import ConversationAPI from '../../api/endpoints/conversationAPI'
+import { updateMessageInDialogue } from './dialoguesSlice'
 
 export const fetchConversation = createAsyncThunk<
     IConversationData,
@@ -31,28 +33,47 @@ export const fetchConversation = createAsyncThunk<
 export const addMessageAsync = createAsyncThunk<
     IMessagesData,
     { text: string },
-    { state: RootState; rejectValue: string }
->('conversation/addMessageAsync', async (data, { rejectWithValue, getState }) => {
-    try {
-        const dialogueId = getState().conversation.dialogueId
-        const toUserId = getState().conversation.userId
+    { state: RootState; rejectValue: string; dispatch: AppDispatch }
+>(
+    'conversation/addMessageAsync',
+    async (data, { rejectWithValue, getState, dispatch }) => {
+        try {
+            const dialogueId = getState().conversation.dialogueId
+            const toUserId = getState().conversation.userId
 
-        if (!dialogueId) {
-            throw new Error('Occurred some error')
+            if (!dialogueId) {
+                throw new Error('Occurred some error')
+            }
+
+            const response = await ConversationAPI.addMessage(
+                data.text,
+                dialogueId
+            )
+
+            if (response.data.resultCode === ResultCode.Error)
+                throw new Error(response.data.msg)
+
+            dispatch(
+                updateMessageInDialogue({
+                    text: response.data.data.text,
+                    date: response.data.data.date,
+                    dialogueId: dialogueId,
+                })
+            )
+
+            toUserId &&
+                chatAPI.addMessage({
+                    message: response.data.data,
+                    dialogueId,
+                    toUserId,
+                })
+
+            return response.data.data
+        } catch (err: any) {
+            return rejectWithValue((err as Error).message)
         }
-
-        const response = await ConversationAPI.addMessage(data.text, dialogueId)
-
-        if (response.data.resultCode === ResultCode.Error)
-            throw new Error(response.data.msg)
-
-        toUserId && chatAPI.addMessage(response.data.data, toUserId)
-
-        return response.data.data
-    } catch (err: any) {
-        return rejectWithValue((err as Error).message)
     }
-})
+)
 
 interface IInitialState {
     messages: IMessagesData[]
@@ -84,9 +105,9 @@ export const conversationSlice = createSlice({
             state.imagePath = null
             state.userId = null
         },
-        addDMessage: (state, action: PayloadAction<IMessagesData>) => {
-            // console.log('action.payload', action.payload)
-            state.messages.push(action.payload)
+        addDMessage: (state, action: PayloadAction<IMessageGetSocket>) => {
+            if (action.payload.dialogueId === state.dialogueId)
+                state.messages.push(action.payload.message)
         },
     },
     extraReducers(builder) {

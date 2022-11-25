@@ -27,7 +27,7 @@ const ListOfMassages = () => {
             <div ref={massagesTrackRef} className='px-[25px] justify-self-end'>
                 {messages.map((item) => (
                     <Message
-                        key={item.message_id + item.date}
+                        key={item.message_id + item.date.toString()}
                         messageId={item.message_id}
                         text={item.text}
                         isMy={item.owner_user_id === myId}

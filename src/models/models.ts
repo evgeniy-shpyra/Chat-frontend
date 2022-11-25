@@ -48,6 +48,8 @@ export interface IDialogueData {
     username: string
     email: string
     image_path: string
+    date: string
+    text: string
 }
 
 export interface IMessagesData {

@@ -4,14 +4,16 @@ import { IOtherUserData } from '../../models/models'
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import UsersAPI from '../../api/endpoints/usersAPI'
 
-export const fetchAllUsers = createAsyncThunk<
+export const fetchUsers = createAsyncThunk<
     Array<IOtherUserData>,
     undefined,
     { rejectValue: string; state: RootState }
->('users/fetchAllUsers', async (_, { rejectWithValue, getState }) => {
+>('users/fetchUsers', async (_, { rejectWithValue, getState }) => {
     try {
-        const uploadPage = getState().users.currentUploadPage + 1
-        const response = await UsersAPI.getAllUsers(uploadPage)
+        const uploadPage: number = getState().users.currentUploadPage + 1
+        const name: string = getState().users.valueForSearching
+
+        const response = await UsersAPI.getAllUsers(uploadPage, name)
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
@@ -30,6 +32,7 @@ interface IInitialState {
         imagepath: string | null
     }>
     currentUploadPage: number
+    valueForSearching: string
     isLoading: boolean
     error: string | null
 }
@@ -37,6 +40,7 @@ interface IInitialState {
 const initialState: IInitialState = {
     users: [],
     currentUploadPage: -1,
+    valueForSearching: '',
     isLoading: false,
     error: null,
 }
@@ -48,30 +52,41 @@ export const usersSlice = createSlice({
         addUserToUsers(state, action: PayloadAction<IOtherUserData>) {
             state.users.push(action.payload)
         },
+        changeValueForSearchingUsers(state, action: PayloadAction<string>) {
+            if (state.valueForSearching === '' || action.payload === '') {
+                state.currentUploadPage = -1
+                state.users = []
+                state.isLoading = true
+            }
+            state.valueForSearching = action.payload
+        },
     },
     extraReducers(builder) {
         builder
-            .addCase(fetchAllUsers.pending, (state) => {
+            .addCase(fetchUsers.pending, (state) => {
                 state.error = null
                 state.isLoading = true
             })
             .addCase(
-                fetchAllUsers.fulfilled,
+                fetchUsers.fulfilled,
                 (state, action: PayloadAction<Array<IOtherUserData>>) => {
-                    if (action.payload.length != 0) {
-                        state.users = [...state.users, ...action.payload]
-                            state.currentUploadPage += 1
+                    if (state.valueForSearching === '') {
+                        if (action.payload.length != 0)
+                            state.users = [...state.users, ...action.payload]
+                        state.currentUploadPage += 1
+                    } else {
+                        state.users = action.payload
                     }
                     state.isLoading = false
                 }
             )
-            .addCase(fetchAllUsers.rejected, (state, action) => {
+            .addCase(fetchUsers.rejected, (state, action) => {
                 if (action.payload) state.error = action.payload
                 state.isLoading = false
             })
     },
 })
 
-export const { addUserToUsers } = usersSlice.actions
+export const { addUserToUsers, changeValueForSearchingUsers } = usersSlice.actions
 
 export default usersSlice.reducer

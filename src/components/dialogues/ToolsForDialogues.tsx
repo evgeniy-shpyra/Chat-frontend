@@ -1,33 +1,44 @@
+import { debounce } from 'lodash'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { openUsersWindow } from '../../redux/features/appSlice'
+import {
+    changeValueForSearchingDialogues,
+    fetchDialogues,
+} from '../../redux/features/dialoguesSlice'
 import InputSearch from '../InputSearch'
 
 const ToolsForDialogues = () => {
-    const [searchValue, setSearchValue] = React.useState<string>('')
-
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
-
-    const handleChangeSearchValue = (value: string) => {
-        setSearchValue(value)
-    }
+    const { valueForSearching } = useAppSelector((state) => state.dialogue)
 
     const handleClickToButton = () => {
         dispatch(openUsersWindow())
     }
 
+    const debouncedSearch = React.useRef(
+        debounce(() => {
+            dispatch(fetchDialogues())
+        }, 300)
+    ).current
+
+    const handleChangeSearchValue = (value: string) => {
+        dispatch(changeValueForSearchingDialogues(value))
+        debouncedSearch()
+    }
+
     return (
-        <div className='pl-[35px] pr-[30px] sticky top-0 w-full h-[103px] bg-background_1'>
+        <div className='px-[20px] w-full h-[103px] bg-background_1 '>
             <div className='flex items-center h-full'>
                 <InputSearch
                     handleChangeValue={handleChangeSearchValue}
-                    value={searchValue}
+                    value={valueForSearching}
                 />
                 <button
                     onClick={handleClickToButton}
-                    className='flex-none ml-[25px] h-[55px] w-[55px] p-[12px] bg-white rounded-full _icon-plus text-[30px] text-gray_30'
+                    className='flex-none ml-[20px] h-[55px] w-[55px] p-[12px] bg-white rounded-full _icon-plus text-[30px] text-gray_30 transition-colors hover:text-gray_40'
                 />
             </div>
         </div>

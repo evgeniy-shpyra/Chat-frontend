@@ -21,7 +21,7 @@ const User = ({ id, username, imagePath }: IUser) => {
     return (
         <li
             onClick={handleClickOnUser}
-            className='pt-[15px] mr-[30px] cursor-pointer ease-linear duration-50 hover:bg-black/10 rounded'
+            className='pt-[15px] mr-[30px] cursor-pointer transition-colors hover:bg-black/10 rounded animate-[appearance_0.05s_ease-in-out]'
         >
             <div className='flex items-center pl-[10px]'>
                 <Avatar imagePath={imagePath} styles='h-[60px] w-[60px]' />
@@ -45,7 +45,10 @@ export const LoaderUser: React.FC<LoaderUserProps> = ({ numberOfItems }) => {
             {Array(numberOfItems)
                 .fill(0)
                 .map((item, index) => (
-                    <li key={index} className='pt-[15px] mr-[30px]'>
+                    <li
+                        key={index}
+                        className='pt-[15px] mr-[30px] animate-[appearance_0.1s_ease-in-out]'
+                    >
                         <div className='flex items-center pl-[10px]'>
                             <Skeleton
                                 width={60}

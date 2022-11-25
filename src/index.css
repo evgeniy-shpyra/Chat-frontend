@@ -31,6 +31,9 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+._icon-close:before {
+    content: '\e908';
+}
 ._icon-users:before {
     content: '\e907';
 }

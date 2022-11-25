@@ -12,7 +12,7 @@ const ScrollContainer = ({ children, heightStyle, onScrollList }: ScrollContaine
         <div
             onScroll={onScrollList}
             className={
-                `${heightStyle} overflow-y-scroll w-full ease-linear duration-500 ` + scrollTrackStyle
+                `${heightStyle} overflow-y-scroll w-full ease-linear duration-1000 ` + scrollTrackStyle
             }
         >
             {children}

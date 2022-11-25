@@ -18,7 +18,6 @@ const Message = ({ text, isMy, date }: MassageProps) => {
     const myImagePath = useAppSelector((state) => state.auth.imagePath)
 
     const imagePath = isMy ? myImagePath : imagePathInterlocutor
-  
 
     const textContainerStyles = isMy
         ? ' rounded-tl-[10px]'
