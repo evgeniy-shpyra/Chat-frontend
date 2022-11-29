@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import { fetchDialogues } from '../../redux/features/dialoguesSlice'
 import ScrollContainer from '../ScrollContainer'
 import Dialogue, { LoaderDialogue } from './Dialogue'
+import DialogueMenu from './DialogueMenu'
 
 const ListOfDialogues: React.FC = () => {
     const { dialogues, isLoading } = useAppSelector((state) => state.dialogue)
@@ -10,7 +11,11 @@ const ListOfDialogues: React.FC = () => {
 
     const dispatch = useAppDispatch()
 
-    const [openMenu, setOpenMenu] = React.useState<number | null>(null)
+    const [openMenu, setOpenMenu] = React.useState<{
+        id: number
+        positionX: number
+        positionY: number
+    } | null>(null)
 
     React.useEffect(() => {
         dispatch(fetchDialogues())
@@ -27,9 +32,18 @@ const ListOfDialogues: React.FC = () => {
         }
     }
 
-    const onOpenMenu = (id: number) => {
-        setOpenMenu(id)
+    const onOpenMenu = (e: React.MouseEvent, id: number) => {
+        setOpenMenu({ id, positionX: e.clientX, positionY: e.clientY })
     }
+
+    const onCloseMenu = () => {
+        setOpenMenu(null)
+    }
+
+    React.useEffect(() => {
+        window.addEventListener('click', onCloseMenu)
+        return () => window.removeEventListener('click', onCloseMenu)
+    }, [])
 
     return (
         <ul className='pr-[4px] h-[calc(100%-103px)]'>
@@ -44,9 +58,16 @@ const ListOfDialogues: React.FC = () => {
                         text={item.text ? item.text : 'History is empty'}
                         isActive={dialogueId == item.dialogue_id}
                         onOpenMenu={onOpenMenu}
+                        isOpenMenu={openMenu && openMenu.id === item.dialogue_id ? true : false}
                     />
                 ))}
-                {openMenu && <div>{openMenu}</div>}
+                {openMenu && (
+                    <DialogueMenu
+                        id={openMenu.id}
+                        positionX={openMenu.positionX}
+                        positionY={openMenu.positionY}
+                    />
+                )}
                 {isLoading && dialogues.length === 0 && (
                     <LoaderDialogue numberOfItems={3} />
                 )}

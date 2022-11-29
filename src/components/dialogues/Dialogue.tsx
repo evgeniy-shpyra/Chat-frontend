@@ -10,7 +10,8 @@ interface IDialogueProps {
     text: string
     imagePath: string
     isActive: boolean
-    onOpenMenu: (id: number) => void
+    isOpenMenu: boolean
+    onOpenMenu: (e: React.MouseEvent, id: number) => void
 }
 
 const getNumberOfDay = (date: Date) => {
@@ -30,6 +31,7 @@ const Dialogue = ({
     imagePath,
     isActive,
     onOpenMenu,
+    isOpenMenu,
 }: IDialogueProps) => {
     const [date, setDate] = React.useState<string>()
     const [reduceText, setReduceText] = React.useState<string>()
@@ -65,12 +67,12 @@ const Dialogue = ({
     const navigate = useNavigate()
 
     const onLeftClickHandler = () => {
-        navigate(`/${id}`)
+        !isOpenMenu && navigate(`/${id}`)
     }
 
     const onRightClickHandler = (e: React.MouseEvent<HTMLLIElement>) => {
         e.preventDefault()
-        onOpenMenu(id)
+        onOpenMenu(e, id)
     }
 
     return (
@@ -80,8 +82,10 @@ const Dialogue = ({
             onContextMenu={onRightClickHandler}
             className={`flex py-[15px] mr-[13px] ml-[13px] px-[25px] rounded cursor-pointer
                 transition-color animate-[appearance_0.1s_ease-in-out] ${
-                    !isActive ? 'hover:bg-background_4/50' : 'bg-background_4'
-                }`}
+                    !isActive
+                        ? `${isOpenMenu ? 'hover:bg-background_4/50' : ''}`
+                        : 'bg-background_4'
+                } ${isOpenMenu && !isActive ? 'bg-background_4/50' : ''}`}
         >
             <Avatar imagePath={imagePath} styles='w-[60px] h-[60px]' />
             <div className='flex-auth w-full flex flex-col justify-between pl-[16px] pr-[20px] py-[2px]'>
@@ -97,10 +101,6 @@ const Dialogue = ({
             </div>
         </li>
     )
-}
-
-const DialogueMenu: React.FC = () => {
-    return <div>menu</div>
 }
 
 interface LoaderDialogueProps {

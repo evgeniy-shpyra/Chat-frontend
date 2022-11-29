@@ -1,6 +1,7 @@
 import {
     IResponseDialogueData,
     IResponseDialoguesData,
+    IResponseDeleteDialogueData
 } from './../../models/responseModels'
 import instance from '..'
 
@@ -11,9 +12,10 @@ class DialoguesAPI {
         })
     }
     static addDialogue = (id: number) => {
-        return instance.post<IResponseDialogueData>(`/dialogue/${id}`, {
-            withCredentials: true,
-        })
+        return instance.post<IResponseDialogueData>(`/dialogue/${id}`)
+    }
+    static deleteDialogue = (id: number) => {
+        return instance.delete<IResponseDeleteDialogueData>(`/dialogue/${id}`)
     }
 }
 

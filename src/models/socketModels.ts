@@ -16,11 +16,13 @@ export interface ClientToServerEvents {
     'online:add': (id: number) => void
     'message:add': (data: IMessageGetSocket) => void
     'dialogue:add': (data: { dialogueId: number; toUserId: number }) => void
+    'dialogue:delete': (data: { dialogueId: number; toUserId: number }) => void
 }
 
 export interface ServerToClientEvents {
     'dialogue:get': (data: models.IDialogueData) => void
     'message:get': (data: IMessageAddSocket) => void
+    'dialogue:delete': (data: {dialogueId: number}) => void
     // noArg: () => void
     // basicEmit: (a: number, b: string, c: Buffer) => void
     // withAck: (d: string, callback: (e: number) => void) => void

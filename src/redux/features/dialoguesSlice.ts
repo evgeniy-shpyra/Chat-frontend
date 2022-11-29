@@ -22,7 +22,6 @@ export const fetchDialogues = createAsyncThunk<
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
 
-
         return response.data.data
     } catch (err: any) {
         return rejectWithValue((err as Error).message)
@@ -51,24 +50,34 @@ export const addDialogueAsync = createAsyncThunk<
     }
 })
 
-// export const deleteDialogue = createAsyncThunk<
-//     IDialogueData,
-//     number,
-//     { rejectValue: string }
-// >('dialogs/addDialogue', async (id, { rejectWithValue }) => {
-//     try {
-//         const response = await DialoguesAPI.addDialogue(id)
+export const deleteDialogue = createAsyncThunk<
+    { id: number },
+    { dialogueId: number },
+    { rejectValue: string; state: RootState }
+>(
+    'dialogs/deleteDialogue',
+    async ({ dialogueId }, { rejectWithValue, getState }) => {
+        try {
+            const response = await DialoguesAPI.deleteDialogue(dialogueId)
 
-//         if (response.data.resultCode === ResultCode.Error)
-//             throw new Error(response.data.msg)
+            if (response.data.resultCode === ResultCode.Error)
+                throw new Error(response.data.msg)
 
-//         chatAPI.addDialogue(response.data.data)
+            const indexOfDialogue = getState().dialogue.dialogues.findIndex(
+                (item) => item.dialogue_id == dialogueId
+            )
 
-//         return response.data.data
-//     } catch (err: any) {
-//         return rejectWithValue((err as Error).message)
-//     }
-// })
+            const toUserId =
+                getState().dialogue.dialogues[indexOfDialogue].user_id
+
+            chatAPI.deleteDialogue(dialogueId, toUserId)
+
+            return response.data.data
+        } catch (err: any) {
+            return rejectWithValue((err as Error).message)
+        }
+    }
+)
 
 interface initialState {
     dialogues: Array<IDialogueData>
@@ -161,6 +170,24 @@ export const dialogueSlice = createSlice({
                 }
             )
             .addCase(addDialogueAsync.rejected, (state, action) => {
+                if (action.payload) state.error = action.payload
+                state.isLoading = false
+            })
+            .addCase(deleteDialogue.pending, (state) => {
+                state.isLoading = true
+            })
+            .addCase(
+                deleteDialogue.fulfilled,
+                (state, action: PayloadAction<{ id: number }>) => {
+                    // state.dialogues.unshift(action.payload)
+                    const index = state.dialogues.findIndex(
+                        (item) => item.dialogue_id == action.payload.id
+                    )
+                    if (index >= 0) state.dialogues.splice(index, 1)
+                    state.isLoading = false
+                }
+            )
+            .addCase(deleteDialogue.rejected, (state, action) => {
                 if (action.payload) state.error = action.payload
                 state.isLoading = false
             })

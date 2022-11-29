@@ -9,9 +9,10 @@ interface IUser {
     id: number
     username: string
     imagePath: string | null
+    is_exist_dialogue: 0 | 1
 }
 
-const User = ({ id, username, imagePath }: IUser) => {
+const User = ({ id, username, imagePath, is_exist_dialogue }: IUser) => {
     const dispatch = useAppDispatch()
 
     const handleClickOnUser = () => {

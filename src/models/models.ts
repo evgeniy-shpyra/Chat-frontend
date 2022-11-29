@@ -40,6 +40,7 @@ export interface IOtherUserData {
     username: string
     email: string
     imagepath: string | null
+    is_exist_dialogue: 0 | 1
 }
 
 export interface IDialogueData {

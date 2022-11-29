@@ -37,12 +37,17 @@ const ListOfUsers = () => {
                             username={item.username}
                             id={item.user_id}
                             imagePath={item.imagepath}
+                            is_exist_dialogue={item.is_exist_dialogue}
                         />
                     ))}
                     {isLoading && users.length === 0 && (
                         <LoaderUser numberOfItems={3} />
                     )}
-                    {!isLoading && users.length === 0 && <div className='h-full flex items-center justify-center text-gray_40'>No users found</div>}
+                    {!isLoading && users.length === 0 && (
+                        <div className='h-full flex items-center justify-center text-gray_40'>
+                            No users found
+                        </div>
+                    )}
                 </>
             </ScrollContainer>
         </ul>

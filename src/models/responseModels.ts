@@ -37,6 +37,12 @@ export interface IResponseDialoguesData {
     msg?: string
 }
 
+export interface IResponseDeleteDialogueData {
+    data: { id: number }
+    resultCode: ResultCode
+    msg?: string
+}
+
 export interface IResponseConversationData {
     data: models.IConversationData
     resultCode: ResultCode

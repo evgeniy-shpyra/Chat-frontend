@@ -6,7 +6,7 @@ const Dialogues = () => {
     const handleSearch = (value: string) => {}
    
     return (
-        <div className='flex-none w-[450px] bg-background_1 relative border-x-2'>
+        <div className='flex-none w-[450px] bg-background_1 border-x-2'>
             <ToolsForDialogs />
             <ListOfDialogues />
         </div>

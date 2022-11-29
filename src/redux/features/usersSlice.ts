@@ -25,12 +25,7 @@ export const fetchUsers = createAsyncThunk<
 })
 
 interface IInitialState {
-    users: Array<{
-        user_id: number
-        username: string
-        email: string
-        imagepath: string | null
-    }>
+    users: Array<IOtherUserData>
     currentUploadPage: number
     valueForSearching: string
     isLoading: boolean
@@ -87,6 +82,7 @@ export const usersSlice = createSlice({
     },
 })
 
-export const { addUserToUsers, changeValueForSearchingUsers } = usersSlice.actions
+export const { addUserToUsers, changeValueForSearchingUsers } =
+    usersSlice.actions
 
 export default usersSlice.reducer
