@@ -24,6 +24,7 @@ const Account = () => {
             ref={backgroundRef}
             onClick={handleClickToBackground}
             className='absolute top-0 left-0 w-screen h-screen bg-black/20 flex justify-center items-center'
+            
         >
             <div className='bg-white p-[30px] rounded-[10px] w-[500px]'>
                 <div className='flex'>

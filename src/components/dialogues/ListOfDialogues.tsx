@@ -10,6 +10,8 @@ const ListOfDialogues: React.FC = () => {
 
     const dispatch = useAppDispatch()
 
+    const [openMenu, setOpenMenu] = React.useState<number | null>(null)
+
     React.useEffect(() => {
         dispatch(fetchDialogues())
     }, [])
@@ -25,6 +27,10 @@ const ListOfDialogues: React.FC = () => {
         }
     }
 
+    const onOpenMenu = (id: number) => {
+        setOpenMenu(id)
+    }
+
     return (
         <ul className='pr-[4px] h-[calc(100%-103px)]'>
             <ScrollContainer heightStyle='h-full' onScrollList={onScrollList}>
@@ -37,8 +43,10 @@ const ListOfDialogues: React.FC = () => {
                         id={item.dialogue_id}
                         text={item.text ? item.text : 'History is empty'}
                         isActive={dialogueId == item.dialogue_id}
+                        onOpenMenu={onOpenMenu}
                     />
                 ))}
+                {openMenu && <div>{openMenu}</div>}
                 {isLoading && dialogues.length === 0 && (
                     <LoaderDialogue numberOfItems={3} />
                 )}

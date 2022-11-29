@@ -10,6 +10,7 @@ interface IDialogueProps {
     text: string
     imagePath: string
     isActive: boolean
+    onOpenMenu: (id: number) => void
 }
 
 const getNumberOfDay = (date: Date) => {
@@ -28,6 +29,7 @@ const Dialogue = ({
     fullDate,
     imagePath,
     isActive,
+    onOpenMenu,
 }: IDialogueProps) => {
     const [date, setDate] = React.useState<string>()
     const [reduceText, setReduceText] = React.useState<string>()
@@ -62,13 +64,20 @@ const Dialogue = ({
 
     const navigate = useNavigate()
 
-    const onClickHandler = () => {
+    const onLeftClickHandler = () => {
         navigate(`/${id}`)
     }
+
+    const onRightClickHandler = (e: React.MouseEvent<HTMLLIElement>) => {
+        e.preventDefault()
+        onOpenMenu(id)
+    }
+
     return (
         <li
             key={name + id}
-            onClick={onClickHandler}
+            onClick={onLeftClickHandler}
+            onContextMenu={onRightClickHandler}
             className={`flex py-[15px] mr-[13px] ml-[13px] px-[25px] rounded cursor-pointer
                 transition-color animate-[appearance_0.1s_ease-in-out] ${
                     !isActive ? 'hover:bg-background_4/50' : 'bg-background_4'
@@ -88,6 +97,10 @@ const Dialogue = ({
             </div>
         </li>
     )
+}
+
+const DialogueMenu: React.FC = () => {
+    return <div>menu</div>
 }
 
 interface LoaderDialogueProps {

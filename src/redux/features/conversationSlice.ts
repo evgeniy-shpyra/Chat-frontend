@@ -131,18 +131,18 @@ export const conversationSlice = createSlice({
                 state.isLoading = false
             })
             .addCase(addMessageAsync.pending, (state) => {
-                state.isLoading = true
+                // state.isLoading = true
             })
             .addCase(
                 addMessageAsync.fulfilled,
                 (state, action: PayloadAction<IMessagesData>) => {
                     state.messages.push(action.payload)
-                    state.isLoading = false
+                    // state.isLoading = false
                 }
             )
             .addCase(addMessageAsync.rejected, (state, action) => {
                 if (action.payload) state.error = action.payload
-                state.isLoading = false
+                // state.isLoading = false
             })
     },
 })

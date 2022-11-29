@@ -20,10 +20,11 @@ const ListOfMassages = () => {
 
     React.useEffect(() => {
         scrollToBottom()
+        
     }, [messages])
 
     return (
-        <div className={'flex flex-col overflow-y-scroll  ' + scrollTrackStyle}>
+        <div className={'flex flex-col overflow-y-scroll ease-linear duration-1000 ' + scrollTrackStyle}>
             <div ref={massagesTrackRef} className='px-[25px] justify-self-end'>
                 {messages.map((item) => (
                     <Message
@@ -31,7 +32,7 @@ const ListOfMassages = () => {
                         messageId={item.message_id}
                         text={item.text}
                         isMy={item.owner_user_id === myId}
-                        date={item.date}
+                        fullDate={item.date}
                     />
                 ))}
             </div>
