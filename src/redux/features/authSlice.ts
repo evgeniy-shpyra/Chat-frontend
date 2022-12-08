@@ -250,6 +250,7 @@ export const authSlice = createSlice({
             .addCase(
                 logout.fulfilled,
                 (state, action: PayloadAction<string>) => {
+                    localStorage.removeItem('token')
                     state.id = null
                     state.username = null
                     state.email = null

@@ -23,7 +23,7 @@ import {
     deleteDialogueUsers,
 } from '../../redux/features/usersSlice'
 
-const wsBase = `${process.env.REACT_APP_SERVER_HOST}/` || 'http://localhost:8080/'
+const wsBase = `${process.env.REACT_APP_SERVER_HOST}` || 'http://localhost:8080'
 
 let ws: Socket<ServerToClientEvents, ClientToServerEvents> | null = null
 
@@ -61,14 +61,14 @@ const subscribeMessage = (dispatch: AppDispatch) => {
 
 export const chatAPI = {
     subscribe: (addDispatch: AppDispatch, userId: number) => {
-        ws = io(wsBase)
+        ws = io(wsBase, { transports: ['websocket'] })
         subscribeDialogues(addDispatch)
         subscribeMessage(addDispatch)
- 
+
         ws?.emit('online:add', userId)
     },
 
-    logout: (userId: number) => { 
+    logout: (userId: number) => {
         ws?.emit('logout', { userId })
     },
 
