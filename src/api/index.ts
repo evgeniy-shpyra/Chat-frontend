@@ -11,7 +11,7 @@ instance.interceptors.request.use((config: any) => {
 })
 
 export enum ResultCode {
-    Error = 0,
+    Error = 0, 
     Success = 1,
 }
 
