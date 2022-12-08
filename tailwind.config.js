@@ -3,6 +3,10 @@ module.exports = {
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {
+            width: {},
+            height: {
+                mobileMenu: '80px',
+            },
             keyframes: {
                 appearance: {
                     '0%': { opacity: '0' },

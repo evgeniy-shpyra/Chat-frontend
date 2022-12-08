@@ -1,15 +1,39 @@
 import React from 'react'
 import ToolsForDialogs from './ToolsForDialogues'
 import ListOfDialogues from './ListOfDialogues'
+import { Resizable } from 're-resizable'
+import Menu from '../Menu'
 
-const Dialogues = () => {
-    const handleSearch = (value: string) => {}
-   
+interface DialoguesProps {
+    isBigFormat: boolean
+}
+
+const Dialogues: React.FC<DialoguesProps> = ({ isBigFormat }) => {
+
+    
+
     return (
-        <div className='flex-none w-[450px] bg-background_1 border-x-2'>
-            <ToolsForDialogs />
+        <Resizable
+            defaultSize={{
+                width: isBigFormat ? 400 : '100%',
+                height: 'calc(100%-80px)',
+            }}
+            className={`flex-none bg-background_1 flex flex-col ${
+                isBigFormat ? 'border-x-2' : ''
+            } `}
+            maxWidth={isBigFormat ? 600 : '100%'}
+            minWidth={350}
+            enable={{
+                left: false,
+                right: isBigFormat,
+                bottom: false,
+                top: false,
+            }}
+        >
+            <ToolsForDialogs isBigFormat={isBigFormat} />
             <ListOfDialogues />
-        </div>
+            {!isBigFormat && <Menu isBigFormat={isBigFormat} />}
+        </Resizable>
     )
 }
 

@@ -2,33 +2,28 @@ import React from 'react'
 import InterlocutorInfo from './InterlocutorInfo'
 import InputMassage from './InputMassage'
 import ListOfMassages from './ListOfMassages'
-import { useParams } from 'react-router-dom'
-import { useAppDispatch } from '../../hooks/reduxHooks'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
 import {
     closeConversation,
     fetchConversation,
 } from '../../redux/features/conversationSlice'
-// import {
-//     closeConversation,
-//     fetchMessages,
-// } from '../../redux/features/messagesSlice'
 
-const data = {
-    name: 'Alex1',
-    massage: 'Hello, man! How are you?',
-    avatarUrl:
-        'https://ev-chat-images.s3.eu-north-1.amazonaws.com/1667232249540-4.jpg',
+interface ConversationProps {
+    isBigFormat: boolean
 }
 
-interface ConversationProps {}
-
-const Conversation: React.FC = () => {
+const Conversation: React.FC<ConversationProps> = ({ isBigFormat }) => {
     const { id } = useParams()
-
+    
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
 
     React.useEffect(() => {
-        dispatch(fetchConversation(Number(id)))
+        dispatch(fetchConversation(Number(id))).then((res) => {
+            if (res.meta.requestStatus === 'rejected') navigate('/')
+        })
+
         return () => {
             dispatch(closeConversation())
         }
@@ -36,9 +31,9 @@ const Conversation: React.FC = () => {
 
     return (
         <div className='flex-auto w-full bg-background_4 relative flex flex-col'>
-            <InterlocutorInfo />
+            <InterlocutorInfo isBigFormat={isBigFormat} />
             <div className='flex-auto h-full pr-[5px] overflow-hidden flex flex-col justify-end'>
-                <ListOfMassages />
+                <ListOfMassages isBigFormat={isBigFormat} />
             </div>
             <InputMassage />
         </div>

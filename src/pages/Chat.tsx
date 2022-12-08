@@ -6,16 +6,40 @@ import Conversation from '../components/conversation/Conversation'
 import EmptyConversation from '../components/conversation/EmptyConversation'
 import ModalWindows from '../components/ModalWindows'
 import Menu from '../components/Menu'
+import { useAppSelector } from '../hooks/reduxHooks'
 
 const Chat = React.memo(() => {
+    const isDesktop = useAppSelector((state) => state.app.isDesktop)
+
     return (
         <div className='flex h-screen'>
-            <Menu />
-            <Dialogues />
-            <Routes>
-                <Route path='/:id' element={<Conversation />} />
-                <Route path='/' element={<EmptyConversation />} />
-            </Routes>
+            {isDesktop ? (
+                <>
+                    <Menu isBigFormat={isDesktop} />
+                    <Dialogues isBigFormat={isDesktop} />
+                    <Routes>
+                        <Route
+                            path='/:id'
+                            element={<Conversation isBigFormat={isDesktop} />}
+                        />
+                        <Route path='/' element={<EmptyConversation />} />
+                    </Routes>
+                </>
+            ) : (
+                <>
+                    <Routes>
+                        <Route
+                            path='/'
+                            element={<Dialogues isBigFormat={isDesktop} />}
+                        />
+                        <Route
+                            path='/:id'
+                            element={<Conversation isBigFormat={isDesktop} />}
+                        />
+                    </Routes>
+                </>
+            )}
+
             <ModalWindows />
         </div>
     )

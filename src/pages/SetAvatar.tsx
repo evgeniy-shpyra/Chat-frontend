@@ -67,8 +67,8 @@ const SetAvatar = () => {
     return (
         <>
             <div className='flex justify-center items-center w-full h-screen'>
-                <div className='bg-second_bg rounded-[20px] p-[50px]'>
-                    <h1 className='text-[30px] text-paragraph font-medium text-center pb-[50px]'>
+                <div className='bg-second_bg p-[50px] rounded-[20px] mx-[10px]'>
+                    <h1 className='text-[30px] leading-10 text-paragraph font-medium text-center pb-[40px] sm:pb-[50px]'>
                         Add avatar for your profile
                     </h1>
                     <div className='mx-auto w-[200px] h-[200px] bg-white rounded-full border-[1.5px] border-gray_10 mb-[50px] truncate relative'>
@@ -84,7 +84,7 @@ const SetAvatar = () => {
                             htmlFor='set-avatar'
                             className='w-full bg-gray_10/70 h-[50px] text-center text-gray_60 cursor-pointer pt-[5px] absolute right-0 bottom-0 z-10'
                         >
-                            select picture
+                            upload picture
                         </label>
                         <input
                             id='set-avatar'
@@ -99,7 +99,7 @@ const SetAvatar = () => {
                         <button
                             onClick={handleSubmit}
                             className={
-                                'inline-block bg-[#84C7AE] px-[50px] py-[20px] rounded-[23px] text-[25px] text-white'
+                                'inline-block bg-[#84C7AE] px-[30px] py-[15px] text-[20px] rounded-[15px] sm:px-[40px] sm:py-[17px] sm:rounded-[20px] sm:text-[22px] md:px-[50px] md:py-[20px] md:rounded-[23px] md:text-[25px] text-white'
                             }
                         >
                             Set as profile picture

@@ -8,25 +8,38 @@ import { io, Socket } from 'socket.io-client'
 import { AppDispatch } from '../../redux/store'
 import { IDialogueData, IMessagesData } from '../../models/models'
 import {
-    addDialogue,
+    createDialogue,
+    clearHistory,
+    deleteDialogue,
+    deleteDialogueAsync,
     updateMessageInDialogue,
 } from '../../redux/features/dialoguesSlice'
-import { addDMessage } from '../../redux/features/conversationSlice'
+import {
+    addDMessage,
+    deleteHistoryOfConversation,
+} from '../../redux/features/conversationSlice'
+import {
+    createDialogueUsers,
+    deleteDialogueUsers,
+} from '../../redux/features/usersSlice'
 
 const wsBase = process.env.REACT_APP_SERVER_HOST || 'http://localhost:8080/'
 
 let ws: Socket<ServerToClientEvents, ClientToServerEvents> | null = null
-// let dispatch: AppDispatch | null = null
 
 const subscribeDialogues = (dispatch: AppDispatch) => {
     ws?.on('dialogue:get', (data: IDialogueData) => {
-        dispatch(addDialogue(data))
-        console.log(data)
+        dispatch(createDialogue(data))
+        dispatch(createDialogueUsers({ userId: data.user_id }))
     })
 
-    ws?.on('dialogue:delete', (date: { dialogueId: number }) => {
-        console.log(date.dialogueId)
-    })
+    ws?.on(
+        'dialogue:delete',
+        (data: { dialogueId: number; userId: number }) => {
+            dispatch(deleteDialogue({ dialogueId: data.dialogueId }))
+            dispatch(deleteDialogueUsers({ userId: data.userId }))
+        }
+    )
 }
 
 const subscribeMessage = (dispatch: AppDispatch) => {
@@ -40,6 +53,10 @@ const subscribeMessage = (dispatch: AppDispatch) => {
             })
         )
     })
+    ws?.on('conversation-clear-history:get', (date: { dialogueId: number }) => {
+        dispatch(clearHistory({ dialogueId: date.dialogueId }))
+        dispatch(deleteHistoryOfConversation({ dialogueId: date.dialogueId }))
+    })
 }
 
 export const chatAPI = {
@@ -51,6 +68,10 @@ export const chatAPI = {
         ws?.emit('online:add', userId)
     },
 
+    logout: (userId: number) => {
+        ws?.emit('logout', { userId })
+    },
+
     addDialogue: (dialogueId: number, toUserId: number) => {
         ws?.emit('dialogue:add', { dialogueId, toUserId })
     },
@@ -59,7 +80,11 @@ export const chatAPI = {
         ws?.emit('message:add', data)
     },
 
-    deleteDialogue: (dialogueId: number, toUserId: number) => {
-        ws?.emit('dialogue:delete', { dialogueId, toUserId })
+    deleteDialogue: (dialogueId: number, toUserId: number, myId: number) => {
+        ws?.emit('dialogue:delete', { dialogueId, toUserId, userId: myId })
+    },
+
+    deleteConversation: (dialogueId: number, toUserId: number) => {
+        ws?.emit('conversation-clear-history:add', { dialogueId, toUserId })
     },
 }

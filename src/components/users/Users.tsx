@@ -8,25 +8,27 @@ import ToolsForUsers from './ToolsForUsers'
 
 const Users = () => {
     const dispatch = useAppDispatch()
-    const backgroundRef = React.useRef<HTMLDivElement>(null)
- 
+    const usersRef = React.useRef<HTMLDivElement>(null)
+
     const handleClose = () => {
         dispatch(closeUsersWindow())
     }
 
-    const handleClickToBackground = (
-        e: React.MouseEvent<HTMLDivElement, MouseEvent>
-    ) => {
-        if (e.target == backgroundRef.current) handleClose()
+    const onClickHandler = (e: any) => {
+        if (!e?.path?.includes(usersRef.current)) handleClose()
     }
 
+    React.useEffect(() => {
+        setTimeout(() => window.addEventListener('click', onClickHandler), 200)
+        return () => window.removeEventListener('click', onClickHandler)
+    }, [])
+
     return (
-        <div
-            ref={backgroundRef}
-            onClick={handleClickToBackground}
-            className='absolute top-0 left-0 w-screen h-screen bg-black/20 flex justify-center items-center'
-        >
-            <div className='bg-white p-[20px] rounded-[10px] w-[500px] h-[80%] flex flex-col items-start'>
+        <div className='absolute top-0 left-0 p-[15px] w-screen h-[calc(100vh-80px)] lg:h-screen bg-black/20 flex justify-center items-center'>
+            <div
+                ref={usersRef}
+                className='bg-white py-[20px] px-[15px] lg:p-[20px] h-full w-full rounded-[10px] lg:w-[500px] lg:h-[80%] flex flex-col items-start'
+            >
                 <ToolsForUsers handleClose={handleClose} />
                 <ListOfUsers />
             </div>

@@ -8,7 +8,7 @@ import {
     buttonStyle,
     errorFieldStyle,
     fieldStyle,
-} from '../../styles/form'
+} from './styles'
 import { IRegisterDate } from '../../models/models'
 
 export interface IRegisterFields extends IRegisterDate {

@@ -6,7 +6,7 @@ import { IConversationData, IMessagesData } from './../../models/models'
 import { ResultCode } from '../../api/index'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import ConversationAPI from '../../api/endpoints/conversationAPI'
-import { updateMessageInDialogue } from './dialoguesSlice'
+import { clearHistory, updateMessageInDialogue } from './dialoguesSlice'
 
 export const fetchConversation = createAsyncThunk<
     IConversationData,
@@ -22,7 +22,7 @@ export const fetchConversation = createAsyncThunk<
 
             if (response.data.resultCode === ResultCode.Error)
                 throw new Error(response.data.msg)
-
+            
             return response.data.data
         } catch (err: any) {
             return rejectWithValue((err as Error).message)
@@ -75,6 +75,38 @@ export const addMessageAsync = createAsyncThunk<
     }
 )
 
+export const deleteHistoryOfConversationAsync = createAsyncThunk<
+    { dialogueId: number },
+    { dialogueId: number },
+    { rejectValue: string; dispatch: AppDispatch; state: RootState }
+>(
+    'conversation/deleteHistoryOfConversationAsync',
+    async ({ dialogueId }, { rejectWithValue, dispatch, getState }) => {
+        try {
+            const response = await ConversationAPI.deleteConversation(
+                dialogueId
+            )
+
+            if (response.data.resultCode === ResultCode.Error)
+                throw new Error(response.data.msg)
+
+            dispatch(clearHistory({ dialogueId }))
+
+            const indexOfDialogue = getState().dialogue.dialogues.findIndex(
+                (item) => item.dialogue_id == dialogueId
+            )
+            const toUserId =
+                getState().dialogue.dialogues[indexOfDialogue].user_id
+
+            chatAPI.deleteConversation(dialogueId, toUserId)
+
+            return response.data.data
+        } catch (err: any) {
+            return rejectWithValue((err as Error).message)
+        }
+    }
+)
+
 interface IInitialState {
     messages: IMessagesData[]
     dialogueId: number | null
@@ -103,11 +135,19 @@ export const conversationSlice = createSlice({
             state.messages = []
             state.username = null
             state.imagePath = null
+            state.dialogueId = null
             state.userId = null
         },
         addDMessage: (state, action: PayloadAction<IMessageGetSocket>) => {
             if (action.payload.dialogueId === state.dialogueId)
                 state.messages.push(action.payload.message)
+        },
+        deleteHistoryOfConversation: (
+            state,
+            action: PayloadAction<{ dialogueId: number }>
+        ) => {
+            if (state.dialogueId == action.payload.dialogueId)
+                state.messages = []
         },
     },
     extraReducers(builder) {
@@ -137,15 +177,27 @@ export const conversationSlice = createSlice({
                 addMessageAsync.fulfilled,
                 (state, action: PayloadAction<IMessagesData>) => {
                     state.messages.push(action.payload)
-                    // state.isLoading = false
                 }
             )
             .addCase(addMessageAsync.rejected, (state, action) => {
                 if (action.payload) state.error = action.payload
-                // state.isLoading = false
             })
+            .addCase(
+                deleteHistoryOfConversationAsync.fulfilled,
+                (state, action: PayloadAction<{ dialogueId: number }>) => {
+                    if (state.dialogueId == action.payload.dialogueId)
+                        state.messages = []
+                }
+            )
+            .addCase(
+                deleteHistoryOfConversationAsync.rejected,
+                (state, action) => {
+                    if (action.payload) state.error = action.payload
+                }
+            )
     },
 })
 
-export const { closeConversation, addDMessage } = conversationSlice.actions
+export const { closeConversation, addDMessage, deleteHistoryOfConversation } =
+    conversationSlice.actions
 export default conversationSlice.reducer

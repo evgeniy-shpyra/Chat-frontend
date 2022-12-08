@@ -6,8 +6,8 @@ interface FormContainerProps {
 
 const FormContainer = ({ children }: FormContainerProps) => {
     return (
-        <div className='min-h-screen flex justify-center items-center'>
-            <div className='bg-second_bg p-[50px] rounded-[20px]'>
+        <div className='min-h-screen flex justify-center items-center w-full'>
+            <div className='bg-second_bg mx-[10px] p-[20px] rounded-[15px] sm:rounded-[15px] md:p-[35px] lg:p-[40px] xl:p-[50px] '>
                 {children}
             </div>
         </div>

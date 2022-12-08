@@ -17,7 +17,7 @@ export const registration = createAsyncThunk<
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
-        
+
         chatAPI.subscribe(dispatch, response.data.data.user.id)
 
         return response.data.data
@@ -40,6 +40,25 @@ export const login = createAsyncThunk<
         // chatAPI.subscribe(thunkAPI.dispatch, response.data.data.user.user_id)
         chatAPI.subscribe(thunkAPI.dispatch, response.data.data.user.id)
         return response.data.data
+    } catch (err) {
+        return thunkAPI.rejectWithValue((err as Error).message)
+    }
+})
+
+export const logout = createAsyncThunk<
+    string,
+    undefined,
+    { rejectValue: string; state: RootState }
+>('auth/logout', async (_, thunkAPI) => {
+    try {
+        const response = await authAPI.logout()
+        const userId = thunkAPI.getState().auth.id
+        if (response.data.resultCode === ResultCode.Error)
+            throw new Error(response.data.msg)
+
+        if (userId) chatAPI.logout(userId)
+
+        return response.data.data.token
     } catch (err) {
         return thunkAPI.rejectWithValue((err as Error).message)
     }
@@ -221,6 +240,26 @@ export const authSlice = createSlice({
                 }
             )
             .addCase(setAvatar.rejected, (state, action) => {
+                if (action.payload) state.error = action.payload
+                state.isLoading = false
+            })
+            .addCase(logout.pending, (state) => {
+                state.isLoading = true
+                state.error = null
+            })
+            .addCase(
+                logout.fulfilled,
+                (state, action: PayloadAction<string>) => {
+                    state.id = null
+                    state.username = null
+                    state.email = null
+                    state.imagePath = null
+                    state.error = null
+                    state.authStatus = AuthStatusEnum.Logout
+                    state.isLoading = false
+                }
+            )
+            .addCase(logout.rejected, (state, action) => {
                 if (action.payload) state.error = action.payload
                 state.isLoading = false
             })

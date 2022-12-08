@@ -1,4 +1,8 @@
-import { IResponseConversationData, IResponseMessageData } from './../../models/responseModels'
+import {
+    IResponseConversationData,
+    IResponseMessageData,
+    IResponseDeleteConversation,
+} from './../../models/responseModels'
 import instance from '..'
 
 class ConversationAPI {
@@ -12,6 +16,11 @@ class ConversationAPI {
             text,
             dialogueId,
         })
+    }
+    static deleteConversation = (dialogueId: number) => {
+        return instance.delete<IResponseDeleteConversation>(
+            `/conversation/${dialogueId}`
+        )
     }
 }
 

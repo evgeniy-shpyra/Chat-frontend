@@ -26,7 +26,6 @@ const ListOfDialogues: React.FC = () => {
             Math.ceil(e.currentTarget.scrollTop) +
                 e.currentTarget.offsetHeight ==
             e.currentTarget.scrollHeight
-
         if (scrollBottom && !isLoading) {
             dispatch(fetchDialogues())
         }
@@ -36,9 +35,9 @@ const ListOfDialogues: React.FC = () => {
         setOpenMenu({ id, positionX: e.clientX, positionY: e.clientY })
     }
 
-    const onCloseMenu = () => {
+    const onCloseMenu = React.useCallback(() => {
         setOpenMenu(null)
-    }
+    }, [])
 
     React.useEffect(() => {
         window.addEventListener('click', onCloseMenu)
@@ -46,8 +45,12 @@ const ListOfDialogues: React.FC = () => {
     }, [])
 
     return (
-        <ul className='pr-[4px] h-[calc(100%-103px)]'>
-            <ScrollContainer heightStyle='h-full' onScrollList={onScrollList}>
+        <ul className='flex-auto w-full pr-[4px] h-[calc(100%-165px)] lg:h-[calc(100%-85px)]'>
+            <ScrollContainer
+                heightStyle='h-full'
+                onScrollList={onScrollList}
+                isLocked={openMenu ? true : false}
+            >
                 {dialogues.map((item) => (
                     <Dialogue
                         key={item.dialogue_id + item.username}
@@ -58,13 +61,17 @@ const ListOfDialogues: React.FC = () => {
                         text={item.text ? item.text : 'History is empty'}
                         isActive={dialogueId == item.dialogue_id}
                         onOpenMenu={onOpenMenu}
-                        isOpenMenu={openMenu && openMenu.id === item.dialogue_id ? true : false}
+                        isOpenMenu={
+                            openMenu && openMenu.id === item.dialogue_id
+                                ? true
+                                : false
+                        }
                     />
                 ))}
                 {openMenu && (
                     <DialogueMenu
                         id={openMenu.id}
-                        positionX={openMenu.positionX}
+                        positionX={openMenu.positionX - 100}
                         positionY={openMenu.positionY}
                     />
                 )}

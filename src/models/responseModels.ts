@@ -19,6 +19,12 @@ export interface IResponseUserData {
     msg?: string
 }
 
+export interface IResponseLogoutData {
+    data: { token: string }
+    resultCode: ResultCode
+    msg?: string
+}
+
 export interface IResponseAvatarData {
     path: string
     resultCode: ResultCode
@@ -38,7 +44,7 @@ export interface IResponseDialoguesData {
 }
 
 export interface IResponseDeleteDialogueData {
-    data: { id: number }
+    data: { interlocutorId: number }
     resultCode: ResultCode
     msg?: string
 }
@@ -51,6 +57,12 @@ export interface IResponseConversationData {
 
 export interface IResponseMessageData {
     data: models.IMessagesData
+    resultCode: ResultCode
+    msg?: string
+}
+
+export interface IResponseDeleteConversation {
+    data: { dialogueId: number }
     resultCode: ResultCode
     msg?: string
 }

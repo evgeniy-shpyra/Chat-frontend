@@ -1,6 +1,6 @@
 import React from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks'
-import { fetchUsers } from '../../redux/features/usersSlice'
+import { clearUsers, fetchUsers } from '../../redux/features/usersSlice'
 import ScrollContainer from '../ScrollContainer'
 import User, { LoaderUser } from './User'
 
@@ -11,6 +11,9 @@ const ListOfUsers = () => {
 
     React.useEffect(() => {
         dispatch(fetchUsers())
+        return () => {
+            dispatch(clearUsers())
+        }
     }, [])
 
     const onScrollList = (e: React.UIEvent<HTMLElement>) => {
@@ -25,10 +28,10 @@ const ListOfUsers = () => {
     }
 
     return (
-        <ul className='w-full h-full'>
+        <ul className='w-full h-[calc(100%-75px)]'>
             <ScrollContainer
                 onScrollList={onScrollList}
-                heightStyle='h-[calc(100%-75px)]'
+                heightStyle='h-full'
             >
                 <>
                     {users.map((item) => (

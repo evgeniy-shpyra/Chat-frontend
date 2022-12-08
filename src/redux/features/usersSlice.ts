@@ -55,6 +55,31 @@ export const usersSlice = createSlice({
             }
             state.valueForSearching = action.payload
         },
+        clearUsers: (state) => {
+            state.users = []
+            state.currentUploadPage = -1
+        },
+        deleteDialogueUsers: (
+            state,
+            action: PayloadAction<{ userId: number }>
+        ) => {
+            
+            const index = state.users.findIndex(
+                (item) => item.user_id == action.payload.userId
+            )
+         
+            if (index >= 0) state.users[index].is_exist_dialogue = 0
+        },
+        createDialogueUsers: (
+            state,
+            action: PayloadAction<{ userId: number }>
+        ) => {
+            const index = state.users.findIndex(
+                (item) => item.user_id == action.payload.userId
+            )
+            // state.users = [...state.users]
+            if (index >= 0) state.users[index].is_exist_dialogue = 1
+        },
     },
     extraReducers(builder) {
         builder
@@ -82,7 +107,12 @@ export const usersSlice = createSlice({
     },
 })
 
-export const { addUserToUsers, changeValueForSearchingUsers } =
-    usersSlice.actions
+export const {
+    addUserToUsers,
+    changeValueForSearchingUsers,
+    clearUsers,
+    deleteDialogueUsers,
+    createDialogueUsers,
+} = usersSlice.actions
 
 export default usersSlice.reducer

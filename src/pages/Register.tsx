@@ -8,7 +8,7 @@ import RegisterForm from '../components/auth/RegisterForm'
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks'
 import { IOtherUserData, IRegisterDate } from '../models/models'
 import { errorIsShown, registration } from '../redux/features/authSlice'
-import { titleStyle } from '../styles/form'
+import { text, titleStyle } from '../components/auth/styles'
 
 interface RegisterProps {}
 
@@ -19,10 +19,7 @@ const Register: React.FC<RegisterProps> = () => {
 
     const navigate = useNavigate()
 
-    React.useEffect(() => {
-        
-    }, [authStatus])
-
+    React.useEffect(() => {}, [authStatus])
 
     React.useEffect(() => {
         if (error) {
@@ -32,10 +29,9 @@ const Register: React.FC<RegisterProps> = () => {
     }, [error])
 
     const handleSubmit = async (values: IRegisterDate) => {
-        dispatch(registration(values)).then((res)=> {
-            if(res.meta.requestStatus === 'fulfilled')
-                navigate('/set-avatar')
-        } )
+        dispatch(registration(values)).then((res) => {
+            if (res.meta.requestStatus === 'fulfilled') navigate('/set-avatar')
+        })
     }
 
     return (
@@ -43,7 +39,7 @@ const Register: React.FC<RegisterProps> = () => {
             <FormContainer>
                 <h1 className={titleStyle}>Create An Account</h1>
                 <RegisterForm handleSubmit={handleSubmit} />
-                <p className='text-paragraph text-[16px] text-center pt-[20px] '>
+                <p className={text}>
                     Already Have An Account?{' '}
                     <Link to='/login' className='underline'>
                         Log In

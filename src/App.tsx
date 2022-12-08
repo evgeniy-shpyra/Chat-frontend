@@ -8,13 +8,20 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import { checkAuth } from './redux/features/authSlice'
 import Preloader from './components/Preloader'
-import { WebSocketContext } from './WebSocket'
+import useMatchMedia from 'use-match-media-hook'
+import { changeDeviceType, closeAllWindows } from './redux/features/appSlice'
+import { clearDialogues } from './redux/features/dialoguesSlice'
+
+const queries = [
+    '(max-width: 639px)',
+    '(min-width: 640px) and (max-width: 1023px)',
+    '(min-width: 1024px)',
+]
 
 const App: React.FC = () => {
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
     const { authStatus, isLoading } = useAppSelector((state) => state.auth)
-
 
     React.useEffect(() => {
         if (localStorage.getItem('token')) dispatch(checkAuth())
@@ -22,23 +29,26 @@ const App: React.FC = () => {
     }, [])
 
     React.useEffect(() => {
-        if (authStatus === AuthStatusEnum.Logout) navigate('/login')
+        if (authStatus === AuthStatusEnum.Logout) {
+            dispatch(clearDialogues())
+            dispatch(closeAllWindows())
+            navigate('/login')
+        }
     }, [authStatus])
 
-    // const ws = React.useContext(WebSocketContext)
+    const [isMobile, isTablet, isDesktop] = useMatchMedia(queries)
 
-    // console.log(ws)
+    React.useLayoutEffect(() => {
+        dispatch(changeDeviceType({ isMobile, isTablet, isDesktop }))
+    }, [isMobile, isTablet, isDesktop])
 
     return (
         // <React.StrictMode>
         <>
-            <div className='w-screen font-main bg-background_1'>
+            <div className='w-screen overflow-hidden font-main bg-background_1'>
                 <Routes>
                     <Route path='/*' element={<Main />} />
-                    <Route
-                        path='/register'
-                        element={<Register />}
-                    />
+                    <Route path='/register' element={<Register />} />
                     <Route path='/login' element={<Login />} />
                 </Routes>
                 <ToastContainer position='bottom-right' theme='light' />

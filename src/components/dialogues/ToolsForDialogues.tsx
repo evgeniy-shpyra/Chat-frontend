@@ -9,7 +9,13 @@ import {
 } from '../../redux/features/dialoguesSlice'
 import InputSearch from '../InputSearch'
 
-const ToolsForDialogues = () => {
+interface ToolsForDialoguesProps {
+    isBigFormat: boolean
+}
+
+const ToolsForDialogues: React.FC<ToolsForDialoguesProps> = ({
+    isBigFormat,
+}) => {
     const navigate = useNavigate()
     const dispatch = useAppDispatch()
     const { valueForSearching } = useAppSelector((state) => state.dialogue)
@@ -30,17 +36,17 @@ const ToolsForDialogues = () => {
     }
 
     return (
-        <div className='px-[20px] w-full h-[103px] bg-background_1 '>
-            <div className='flex items-center h-full'>
-                <InputSearch
-                    handleChangeValue={handleChangeSearchValue}
-                    value={valueForSearching}
-                />
+        <div className='flex-none px-[20px] flex items-end w-full pt-[20px] pb-[10px] bg-background_1 '>
+            <InputSearch
+                handleChangeValue={handleChangeSearchValue}
+                value={valueForSearching}
+            />
+            {isBigFormat && (
                 <button
                     onClick={handleClickToButton}
                     className='flex-none ml-[20px] h-[55px] w-[55px] p-[12px] bg-white rounded-full _icon-plus text-[30px] text-gray_30 transition-colors hover:text-gray_40'
                 />
-            </div>
+            )}
         </div>
     )
 }

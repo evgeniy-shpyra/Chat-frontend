@@ -80,7 +80,7 @@ const Dialogue = ({
             key={name + id}
             onClick={onLeftClickHandler}
             onContextMenu={onRightClickHandler}
-            className={`flex py-[15px] mr-[13px] ml-[13px] px-[25px] rounded cursor-pointer
+            className={`flex py-[15px] mr-[13px] ml-[13px] px-[15px] lg:px-[25px] rounded cursor-pointer
                 transition-color animate-[appearance_0.1s_ease-in-out] ${
                     !isActive
                         ? `${isOpenMenu ? 'hover:bg-background_4/50' : ''}`
@@ -88,7 +88,7 @@ const Dialogue = ({
                 } ${isOpenMenu && !isActive ? 'bg-background_4/50' : ''}`}
         >
             <Avatar imagePath={imagePath} styles='w-[60px] h-[60px]' />
-            <div className='flex-auth w-full flex flex-col justify-between pl-[16px] pr-[20px] py-[2px]'>
+            <div className='flex-auth w-full flex flex-col justify-between pl-[16px] pr-[20px] py-[2px] overflow-hidden'>
                 <h3 className='text-[19px] text-paragraph font-medium'>
                     {name}
                 </h3>

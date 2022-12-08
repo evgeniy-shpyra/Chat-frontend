@@ -6,7 +6,7 @@ import {
     buttonStyle,
     errorFieldStyle,
     fieldStyle,
-} from '../../styles/form'
+} from './styles'
 import { ILoginDate } from '../../models/models'
 
 interface LoginFormProps {

@@ -7,8 +7,8 @@ import { AuthStatusEnum } from '../models/models'
 import SetAvatar from './SetAvatar'
 
 const Main: React.FC = () => {
-    const { authStatus, id } = useAppSelector((state) => state.auth)
-
+    const { authStatus } = useAppSelector((state) => state.auth)
+    
     return (
         <>
             {authStatus === AuthStatusEnum.Login && (

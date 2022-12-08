@@ -50,7 +50,7 @@ export interface IDialogueData {
     email: string
     image_path: string
     date: string
-    text: string
+    text: string | null
 }
 
 export interface IMessagesData {

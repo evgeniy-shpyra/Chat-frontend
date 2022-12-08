@@ -4,6 +4,7 @@ import { ResultCode } from './../../api/index'
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import DialoguesAPI from '../../api/endpoints/dialoguesAPI'
 import { IDialogueData } from '../../models/models'
+import { createDialogueUsers, deleteDialogueUsers } from './usersSlice'
 
 export const fetchDialogues = createAsyncThunk<
     Array<IDialogueData>,
@@ -28,16 +29,18 @@ export const fetchDialogues = createAsyncThunk<
     }
 })
 
-export const addDialogueAsync = createAsyncThunk<
+export const createDialogueAsync = createAsyncThunk<
     IDialogueData,
     number,
     { rejectValue: string; dispatch: AppDispatch }
->('dialogs/addDialogue', async (id, { rejectWithValue, dispatch }) => {
+>('dialogs/createDialogueAsync', async (id, { rejectWithValue, dispatch }) => {
     try {
         const response = await DialoguesAPI.addDialogue(id)
 
         if (response.data.resultCode === ResultCode.Error)
             throw new Error(response.data.msg)
+
+        dispatch(createDialogueUsers({ userId: response.data.data.user_id }))
 
         chatAPI.addDialogue(
             response.data.data.dialogue_id,
@@ -50,29 +53,43 @@ export const addDialogueAsync = createAsyncThunk<
     }
 })
 
-export const deleteDialogue = createAsyncThunk<
-    { id: number },
+export const deleteDialogueAsync = createAsyncThunk<
     { dialogueId: number },
-    { rejectValue: string; state: RootState }
+    { dialogueId?: number; userId?: number },
+    { rejectValue: string; dispatch: AppDispatch; state: RootState }
 >(
     'dialogs/deleteDialogue',
-    async ({ dialogueId }, { rejectWithValue, getState }) => {
+    async (data, { rejectWithValue, dispatch, getState }) => {
         try {
+            const myId = getState().auth.id
+            let dialogueId: number
+
+            if (data.dialogueId) dialogueId = data.dialogueId
+            else if (data.userId) {
+                const index = getState().dialogue.dialogues.findIndex(
+                    (item) => item.user_id === data.userId
+                )
+                dialogueId = getState().dialogue.dialogues[index].dialogue_id
+            } else throw new Error('Occurred some error')
+
             const response = await DialoguesAPI.deleteDialogue(dialogueId)
 
             if (response.data.resultCode === ResultCode.Error)
                 throw new Error(response.data.msg)
 
-            const indexOfDialogue = getState().dialogue.dialogues.findIndex(
-                (item) => item.dialogue_id == dialogueId
+            dispatch(
+                deleteDialogueUsers({
+                    userId: response.data.data.interlocutorId,
+                })
             )
+            if (myId)
+                chatAPI.deleteDialogue(
+                    dialogueId,
+                    response.data.data.interlocutorId,
+                    myId
+                )
 
-            const toUserId =
-                getState().dialogue.dialogues[indexOfDialogue].user_id
-
-            chatAPI.deleteDialogue(dialogueId, toUserId)
-
-            return response.data.data
+            return { dialogueId }
         } catch (err: any) {
             return rejectWithValue((err as Error).message)
         }
@@ -99,8 +116,24 @@ export const dialogueSlice = createSlice({
     name: 'dialogs',
     initialState,
     reducers: {
-        addDialogue: (state, action: PayloadAction<IDialogueData>) => {
+        clearDialogues: (state) => {
+            state.dialogues= []
+            state.error= null
+            state.valueForSearching= ''
+            state.currentUploadPage= -1
+            state.isLoading= false
+        },
+        createDialogue: (state, action: PayloadAction<IDialogueData>) => {
             state.dialogues.unshift(action.payload)
+        },
+        deleteDialogue: (
+            state,
+            action: PayloadAction<{ dialogueId: number }>
+        ) => {
+            const index = state.dialogues.findIndex(
+                (item) => item.dialogue_id == action.payload.dialogueId
+            )
+            if (index >= 0) state.dialogues.splice(index, 1)
         },
         changeValueForSearchingDialogues(state, action: PayloadAction<string>) {
             if (state.valueForSearching === '' || action.payload === '') {
@@ -133,22 +166,29 @@ export const dialogueSlice = createSlice({
             state.dialogues.splice(index, 1)
             state.dialogues.unshift(updatedDialogue)
         },
+        clearHistory(state, action: PayloadAction<{ dialogueId: number }>) {
+            const index = state.dialogues.findIndex(
+                (item) => item.dialogue_id === action.payload.dialogueId
+            )
+            if (index >= 0) state.dialogues[index].text = null
+        },
     },
     extraReducers(builder) {
         builder
             .addCase(fetchDialogues.pending, (state) => {
-                state.isLoading = true
+                if (state.dialogues.length === 0) state.isLoading = true
             })
             .addCase(
                 fetchDialogues.fulfilled,
                 (state, action: PayloadAction<Array<IDialogueData>>) => {
                     if (state.valueForSearching === '') {
-                        if (action.payload.length != 0)
+                        if (action.payload.length != 0) {
                             state.dialogues = [
                                 ...state.dialogues,
                                 ...action.payload,
                             ]
-                        state.currentUploadPage += 1
+                            state.currentUploadPage += 1
+                        }
                     } else {
                         state.dialogues = action.payload
                     }
@@ -159,35 +199,34 @@ export const dialogueSlice = createSlice({
                 if (action.payload) state.error = action.payload
                 state.isLoading = false
             })
-            .addCase(addDialogueAsync.pending, (state) => {
+            .addCase(createDialogueAsync.pending, (state) => {
                 state.isLoading = true
             })
             .addCase(
-                addDialogueAsync.fulfilled,
+                createDialogueAsync.fulfilled,
                 (state, action: PayloadAction<IDialogueData>) => {
                     state.dialogues.unshift(action.payload)
                     state.isLoading = false
                 }
             )
-            .addCase(addDialogueAsync.rejected, (state, action) => {
+            .addCase(createDialogueAsync.rejected, (state, action) => {
                 if (action.payload) state.error = action.payload
                 state.isLoading = false
             })
-            .addCase(deleteDialogue.pending, (state) => {
+            .addCase(deleteDialogueAsync.pending, (state) => {
                 state.isLoading = true
             })
             .addCase(
-                deleteDialogue.fulfilled,
-                (state, action: PayloadAction<{ id: number }>) => {
-                    // state.dialogues.unshift(action.payload)
+                deleteDialogueAsync.fulfilled,
+                (state, action: PayloadAction<{ dialogueId: number }>) => {
                     const index = state.dialogues.findIndex(
-                        (item) => item.dialogue_id == action.payload.id
+                        (item) => item.dialogue_id == action.payload.dialogueId
                     )
                     if (index >= 0) state.dialogues.splice(index, 1)
                     state.isLoading = false
                 }
             )
-            .addCase(deleteDialogue.rejected, (state, action) => {
+            .addCase(deleteDialogueAsync.rejected, (state, action) => {
                 if (action.payload) state.error = action.payload
                 state.isLoading = false
             })
@@ -195,9 +234,12 @@ export const dialogueSlice = createSlice({
 })
 
 export const {
-    addDialogue,
+    clearDialogues,
+    createDialogue,
     changeValueForSearchingDialogues,
     updateMessageInDialogue,
+    deleteDialogue,
+    clearHistory,
 } = dialogueSlice.actions
 
 export default dialogueSlice.reducer

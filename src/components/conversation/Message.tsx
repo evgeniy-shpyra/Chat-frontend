@@ -7,8 +7,9 @@ interface MassageProps {
     text: string
     isMy: boolean
     fullDate: string
+    isBigFormat: boolean
 }
-const Message = ({ text, isMy, fullDate }: MassageProps) => {
+const Message = ({ text, isMy, fullDate, isBigFormat }: MassageProps) => {
     const [date, setDate] = React.useState<string>()
 
     const imagePathInterlocutor = useAppSelector(
@@ -29,19 +30,21 @@ const Message = ({ text, isMy, fullDate }: MassageProps) => {
         )
     }, [fullDate])
 
+
     return (
         <div
             className={`w-full flex py-[7px] ${isMy ? 'flex-row-reverse' : ''}`}
         >
             <Avatar imagePath={imagePath} styles='w-[50px] h-[50px]' />
             <div
-                className={`relative py-[7px] px-[13px] bg-white inline-block self-start mx-[30px] rounded-b-[15px] max-w-[calc(50%-85px)] ${
+                className={`relative py-[7px] px-[13px] bg-white inline-block self-start mx-[15px] lg:mx-[30px] rounded-b-[15px] xl:max-w-[calc(50%-85px)] 
+                ${
                     isMy
                         ? 'rounded-tl-[13px] pl-[48px]'
                         : 'rounded-tr-[13px] pr-[48px]'
                 }`}
             >
-                <p className='text-[15px] text-paragraph'>{text}</p>
+                <p className='text-[15px] text-paragraph break-all'>{text}</p>
                 <div
                     className={`absolute bottom-[5px] text-[11px] tracking-tighter leading-none font-medium text-gray_50 ${
                         isMy ? 'left-[12px]' : 'right-[12px]'
