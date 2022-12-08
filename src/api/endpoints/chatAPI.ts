@@ -61,7 +61,7 @@ const subscribeMessage = (dispatch: AppDispatch) => {
 
 export const chatAPI = {
     subscribe: (addDispatch: AppDispatch, userId: number) => {
-        ws = io(wsBase, { transports: ['websocket'] })
+        ws = io(wsBase)
         subscribeDialogues(addDispatch)
         subscribeMessage(addDispatch)
 
