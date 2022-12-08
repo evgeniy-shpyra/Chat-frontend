@@ -64,11 +64,11 @@ export const chatAPI = {
         ws = io(wsBase)
         subscribeDialogues(addDispatch)
         subscribeMessage(addDispatch)
-
+ 
         ws?.emit('online:add', userId)
     },
 
-    logout: (userId: number) => {
+    logout: (userId: number) => { 
         ws?.emit('logout', { userId })
     },
 
