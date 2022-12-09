@@ -23,7 +23,9 @@ import {
     deleteDialogueUsers,
 } from '../../redux/features/usersSlice'
 
-const wsBase = `${process.env.REACT_APP_SERVER_HOST}` || 'https://chat-frontend-snowy.vercel.app'
+const wsBase =
+    `${process.env.REACT_APP_SERVER_HOST}` ||
+    'https://chat-frontend-snowy.vercel.app'
 
 let ws: Socket<ServerToClientEvents, ClientToServerEvents> | null = null
 

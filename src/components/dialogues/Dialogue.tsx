@@ -87,7 +87,9 @@ const Dialogue = ({
                         : 'bg-background_4'
                 } ${isOpenMenu && !isActive ? 'bg-background_4/50' : ''}`}
         >
-            <Avatar imagePath={imagePath} styles='w-[60px] h-[60px]' />
+            <div className='flex-none w-[60px]'>
+                <Avatar imagePath={imagePath} styles='w-full h-[60px]' />
+            </div>
             <div className='flex-auth w-full flex flex-col justify-between pl-[16px] pr-[20px] py-[2px] overflow-hidden'>
                 <h3 className='text-[19px] text-paragraph font-medium'>
                     {name}
