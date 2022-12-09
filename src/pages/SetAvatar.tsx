@@ -66,7 +66,7 @@ const SetAvatar = () => {
 
     return (
         <>
-            <div className='flex justify-center items-center w-full h-screen'>
+            <div className='flex justify-center items-center w-full h-full'>
                 <div className='bg-second_bg p-[50px] rounded-[20px] mx-[10px]'>
                     <h1 className='text-[30px] leading-10 text-paragraph font-medium text-center pb-[40px] sm:pb-[50px]'>
                         Add avatar for your profile

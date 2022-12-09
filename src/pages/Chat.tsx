@@ -12,7 +12,7 @@ const Chat = React.memo(() => {
     const isDesktop = useAppSelector((state) => state.app.isDesktop)
 
     return (
-        <div className='flex h-screen'>
+        <div className='flex h-full'>
             {isDesktop ? (
                 <>
                     <Menu isBigFormat={isDesktop} />
