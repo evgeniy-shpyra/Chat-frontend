@@ -24,8 +24,8 @@ import {
 } from '../../redux/features/usersSlice'
 
 const wsBase =
-    `${process.env.REACT_APP_SERVER_HOST}` ||
-    'https://chat-frontend-snowy.vercel.app'
+    // `${process.env.REACT_APP_SERVER_HOST}` ||
+    'ws://chat-frontend-snowy.vercel.app'
 
 let ws: Socket<ServerToClientEvents, ClientToServerEvents> | null = null
 
