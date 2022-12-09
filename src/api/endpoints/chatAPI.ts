@@ -24,8 +24,8 @@ import {
 } from '../../redux/features/usersSlice'
 
 const wsBase =
-    // `${process.env.REACT_APP_SERVER_HOST}` ||
-    'ws://chat-frontend-snowy.vercel.app'
+    `${process.env.REACT_APP_SERVER_HOST}` ||
+    'https://chat-backend-six.vercel.app'
 
 let ws: Socket<ServerToClientEvents, ClientToServerEvents> | null = null
 
@@ -66,6 +66,7 @@ export const chatAPI = {
         ws = io(wsBase, {
             withCredentials: true,
         })
+
         subscribeDialogues(addDispatch)
         subscribeMessage(addDispatch)
 
