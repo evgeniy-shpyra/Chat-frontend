@@ -65,7 +65,7 @@ export const chatAPI = {
     subscribe: (addDispatch: AppDispatch, userId: number) => {
         ws = io(wsBase, {
             withCredentials: true,
-            secure: true,
+            rejectUnauthorized: false
         })
 
         subscribeDialogues(addDispatch)
