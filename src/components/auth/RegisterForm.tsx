@@ -24,6 +24,7 @@ const validateRequired = (value: string, a: any) => {
     if (!value) {
         error = 'Required field!'
     }
+
     return error
 }
 
@@ -39,18 +40,41 @@ const RegisterForm = ({ handleSubmit }: RegisterFormProps) => {
         values: IRegisterFields,
         { setFieldError }: FormikHelpers<IRegisterFields>
     ) => {
-        if (values.password != values.confirmPassword) {
-
-            setFieldError('password', 'Confirm password must be the same as the password')
-
-            // toast.error('Confirm password must be the same as the password')
-        } else {
-            handleSubmit({
-                username: values.username,
-                email: values.email,
-                password: values.password,
-            })
+        if (
+            values.password.length < 5 ||
+            values.username.length < 5 ||
+            !values.email.includes('@')
+        ) {
+            if (!values.email.includes('@'))
+                setFieldError(
+                    'email',
+                    'Incorrect email '
+                )
+            if (values.password.length < 5)
+                setFieldError(
+                    'password',
+                    'Password should be min contain 5 characters'
+                )
+            if (values.username.length < 5)
+                setFieldError(
+                    'username',
+                    'Username should be min contain 5 characters'
+                )
+            return
         }
+        if (values.password != values.confirmPassword) {
+            setFieldError(
+                'password',
+                'Confirm password must be the same as the password'
+            )
+            // toast.error('Confirm password must be the same as the password')
+            return
+        }
+        handleSubmit({
+            username: values.username,
+            email: values.email,
+            password: values.password,
+        })
     }
 
     return (

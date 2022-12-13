@@ -44,7 +44,7 @@ const ListOfUsers = () => {
                         />
                     ))}
                     {isLoading && users.length === 0 && (
-                        <LoaderUser numberOfItems={3} />
+                        <LoaderUser numberOfItems={4} />
                     )}
                     {!isLoading && users.length === 0 && (
                         <div className='h-full flex items-center justify-center text-gray_40'>

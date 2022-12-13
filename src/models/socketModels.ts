@@ -13,7 +13,7 @@ export interface IMessageGetSocket {
 
 export interface ClientToServerEvents {
     'online:add': (id: number) => void
-    'logout': (data: { userId: number }) => void
+    logout: (data: { userId: number }) => void
     'message:add': (data: IMessageGetSocket) => void
     'dialogue:add': (data: { dialogueId: number; toUserId: number }) => void
     'dialogue:delete': (data: {
@@ -25,6 +25,7 @@ export interface ClientToServerEvents {
         dialogueId: number
         toUserId: number
     }) => void
+
 }
 
 export interface ServerToClientEvents {

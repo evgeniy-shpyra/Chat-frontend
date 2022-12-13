@@ -25,7 +25,7 @@ import {
 
 const wsBase =
     `${process.env.REACT_APP_SERVER_HOST}` ||
-    'https://chat-backend-six.vercel.app'
+    'https://chat-backend-six.vercel.app/'
 
 let ws: Socket<ServerToClientEvents, ClientToServerEvents> | null = null
 
@@ -65,9 +65,9 @@ export const chatAPI = {
     subscribe: (addDispatch: AppDispatch, userId: number) => {
         ws = io(wsBase, {
             withCredentials: true,
-            rejectUnauthorized: false
         })
 
+     
         subscribeDialogues(addDispatch)
         subscribeMessage(addDispatch)
 

@@ -76,7 +76,7 @@ const ListOfDialogues: React.FC = () => {
                     />
                 )}
                 {isLoading && dialogues.length === 0 && (
-                    <LoaderDialogue numberOfItems={3} />
+                    <LoaderDialogue numberOfItems={7} />
                 )}
                 {!isLoading && dialogues.length === 0 && (
                     <div className='h-full flex justify-center text-paragraph'>

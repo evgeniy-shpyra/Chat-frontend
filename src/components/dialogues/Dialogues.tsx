@@ -9,9 +9,6 @@ interface DialoguesProps {
 }
 
 const Dialogues: React.FC<DialoguesProps> = ({ isBigFormat }) => {
-
-    
-
     return (
         <Resizable
             defaultSize={{

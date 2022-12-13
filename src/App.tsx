@@ -45,7 +45,7 @@ const App: React.FC = () => {
     return (
         // <React.StrictMode>
         <>
-            <div className='h-full overflow-hidden font-main bg-background_1'>
+            <div className='h-full font-main bg-background_1'>
                 <Routes>
                     <Route path='/*' element={<Main />} />
                     <Route path='/register' element={<Register />} />
